@@ -376,9 +376,14 @@ function parseCSV(raw) {
     }
 
     let idx = {
-        id: findCol(COL.id), year: findCol(COL.year), name: findCol(COL.name),
-        agency: findCol(COL.agency), budget: findCol(COL.budget),
-        disbursed: findCol(COL.disbursed), spent: findCol(COL.spent), province: findCol(COL.province)
+        id:        findCol(COL.id),
+        year:      findCol(COL.year),
+        name:      findCol(COL.name),
+        agency:    findCol(COL.agency),
+        budget:    findCol(COL.budget),
+        disbursed: findCol(COL.disbursed),
+        spent:     findCol(COL.spent),
+        province:  findCol(COL.province),
     };
 
     const result = [];
@@ -386,42 +391,63 @@ function parseCSV(raw) {
         const cols = splitLine(line, delim);
         if (cols.length === 0) return;
 
-        let rawYear = idx.year >= 0 ? (cols[idx.year] || "").trim() : "";
-        let rawName = idx.name >= 0 ? (cols[idx.name] || "").trim() : "";
-        let rawAgency = idx.agency >= 0 ? (cols[idx.agency] || "").trim() : "";
+        // ดึงข้อมูลและตัดช่องว่างซ้าย-ขวาออกทันทีเพื่อความปลอดภัย (.trim())
+        let rawYear     = idx.year >= 0 ? (cols[idx.year] || "").trim() : "";
+        let rawName     = idx.name >= 0 ? (cols[idx.name] || "").trim() : "";
+        let rawAgency   = idx.agency >= 0 ? (cols[idx.agency] || "").trim() : "";
         let rawProvince = idx.province >= 0 ? (cols[idx.province] || "").trim() : "";
-        let rawBudget = idx.budget >= 0 ? cols[idx.budget] : "0";
+        let rawBudget   = idx.budget >= 0 ? cols[idx.budget] : "0";
         let rawDisbursed = idx.disbursed >= 0 ? cols[idx.disbursed] : "0";
-        let rawSpent = idx.spent >= 0 ? cols[idx.spent] : "0";
+        let rawSpent     = idx.spent >= 0 ? cols[idx.spent] : "0";
 
+        // ระบบตรวจจับกรณีคอลัมน์ขยับเลื่อนใน Google Sheets
         if (rawYear && !/^\d{4}$/.test(rawYear)) {
             const matchedYearIdx = cols.findIndex(c => /^(256\d|257\d)$/.test(String(c).trim()));
             if (matchedYearIdx !== -1) {
                 rawYear = cols[matchedYearIdx].trim();
                 cols.forEach((cell) => {
                     const txt = String(cell).trim();
-                    if (txt.includes("โครงการ") || txt.includes("แผนงาน")) rawName = txt;
-                    else if ((txt.includes("จังหวัด") || txt.includes("พัทลุง") || txt.includes("สงขลา") || txt.includes("สุราษฎร์") || txt.includes("ตรัง") || txt.includes("ชุมพร") || txt.includes("นครศรี")) && txt.length < 30) rawProvince = txt;
-                    else if (txt.includes("สำนักงาน") || txt.includes("แขวง") || txt.includes("มหาวิทยาลัย")) rawAgency = txt;
+                    if (txt.includes("โครงการ") || txt.includes("แผนงาน")) {
+                        rawName = txt;
+                    } else if ((txt.includes("จังหวัด") || txt.includes("พัทลุง") || txt.includes("สงขลา") || txt.includes("สุราษฎร์") || txt.includes("ตรัง") || txt.includes("ชุมพร") || txt.includes("นครศรี")) && txt.length < 30) {
+                        rawProvince = txt;
+                    } else if (txt.includes("สำนักงาน") || txt.includes("แขวง") || txt.includes("มหาวิทยาลัย") || txt.includes("อบจ")) {
+                        rawAgency = txt;
+                    }
                 });
             }
         }
 
         const row = {
-            id: i + 1, year: rawYear, name: rawName, agency: rawAgency,
-            budget: toNum(rawBudget), disbursed: toNum(rawDisbursed), spent: toNum(rawSpent),
-            province: rawProvince.replace(/\s+/g, "")
+            id:        i + 1,
+            year:      rawYear,
+            name:      rawName,
+            agency:    rawAgency,
+            budget:    toNum(rawBudget),
+            disbursed: toNum(rawDisbursed),
+            spent:     toNum(rawSpent),
+            province:  rawProvince.replace(/\s+/g, ""), // ลบช่องว่างทั้งหมดในชื่อจังหวัด
         };
 
-        const isValidYear = /^\d{4}$/.test(String(row.year));
-        const isSummary   = /^รวม/.test(row.name.trim()) || row.name.includes("รวมทั้งสิ้น");
+        // ตรวจสอบรูปแบบปีงบประมาณ (รองรับกรณีมีช่องว่างติดมา)
+        const isValidYear = /^\d{4}$/.test(row.year);
         
-        if (row.name && isValidYear && !isSummary) {
+        // ปรับการดักจับแถว "รวม" ให้แม่นยำขึ้น โดยจะข้ามเฉพาะแถวที่เป็นยอดสรุปท้ายตารางจริงๆ เท่านั้น
+        const isSummaryRow = row.name === "รวม" || 
+                             row.name === "รวมทั้งสิ้น" || 
+                             row.name.startsWith("รวมผล") || 
+                             (row.name.includes("รวม") && row.budget === 0 && row.disbursed === 0);
+        
+        // ถ้ามีข้อมูลชื่อโครงการ หรืออย่างน้อยมีระบุหน่วยงาน/จังหวัด และไม่ใช่แถวสรุปยอด ให้ดึงมาแสดงผลทั้งหมด
+        if ((row.name || row.agency) && isValidYear && !isSummaryRow) {
+            
+            // ปรับคลีนชื่อจังหวัดให้เข้าล็อกมาตรฐาน Dropdown
             if (row.province.includes("สุราษฎร์")) row.province = "จังหวัดสุราษฎร์ธานี";
             else if (row.province.includes("นครศรี")) row.province = "จังหวัดนครศรีธรรมราช";
             else if (row.province.includes("ชุมพร")) row.province = "จังหวัดชุมพร";
             else if (row.province.includes("พัทลุง")) row.province = "จังหวัดพัทลุง";
             else if (row.province.includes("สงขลา")) row.province = "จังหวัดสงขลา";
+
             result.push(row);
         }
     });
