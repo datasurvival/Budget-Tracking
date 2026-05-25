@@ -564,7 +564,13 @@ function applyFilters() {
     document.getElementById("kpi-projects").innerText  = data.length;
     document.getElementById("kpi-active-projects").innerText = `ดำเนินการแล้ว ${active} โครงการ`;
 
-    // 2. 💡 ฟังก์ชันคำนวณเปรียบเทียบกับปีก่อนหน้า (YoY Calculation)
+    // 2. เรียกฟังก์ชันคำนวณ YoY
+    renderYoYBadges(year, prov, q, totalBudget, totalDisbursed, totalSpent);
+
+    renderBarChart(data);
+    renderTable(data);
+}
+
 function renderYoYBadges(year, prov, q, curBud, curDis, curSp) {
     const bBadge = document.getElementById("kpi-budget-change");
     const dBadge = document.getElementById("kpi-disbursed-change");
