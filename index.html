@@ -389,7 +389,20 @@ async function fetchCSVWithFallback() {
 
 function parseCSV(raw) {
     const text = raw.replace(/^\uFEFF/, "").trim();
-    const lines = text.split(/\r?\n/).filter(l => l.trim());
+    // รวม multiline cells (เกิดจาก Alt+Enter ใน Google Sheets) กลับเป็นบรรทัดเดียว
+    const rawLines = text.split(/\r?\n/);
+    const mergedLines = [];
+    let buffer = "";
+    let inQuote = false;
+    for (const line of rawLines) {
+        if (buffer) buffer += " "; // แทน newline ด้วย space
+        buffer += line;
+        // นับจำนวน quote เพื่อรู้ว่ายังอยู่ใน quoted field หรือเปล่า
+        for (const ch of line) { if (ch === '"') inQuote = !inQuote; }
+        if (!inQuote) { if (buffer.trim()) mergedLines.push(buffer); buffer = ""; }
+    }
+    if (buffer.trim()) mergedLines.push(buffer);
+    const lines = mergedLines;
     if (lines.length < 2) return [];
 
     const delim = lines[0].includes("\t") ? "\t" : ",";
@@ -435,7 +448,8 @@ function parseCSV(raw) {
         let rawSpent     = idx.spent >= 0 ? cols[idx.spent] : "0";
 
         // ระบบตรวจจับกรณีคอลัมน์ขยับเลื่อนใน Google Sheets
-        if (rawYear && !/^(256\d|257\d)$/.test(rawYear)) {
+        // แก้ไข: เช็คทั้งกรณี rawYear ว่างเปล่า และกรณีไม่ใช่ปีงบประมาณจริง
+        if (!/^(256\d|257\d)$/.test(rawYear.replace(/\.0+$/, "").trim())) {
             const matchedYearIdx = cols.findIndex(c => /^(256\d|257\d)$/.test(String(c).trim()));
             if (matchedYearIdx !== -1) {
                 rawYear = cols[matchedYearIdx].trim();
@@ -476,6 +490,13 @@ function parseCSV(raw) {
                              nameTrimmed === "รวมผลการดำเนินงาน" ||
                              /^รวม\s*$/.test(nameTrimmed);
         
+        // Debug: แสดงแถวที่ถูกทิ้งใน console เพื่อตรวจสอบ
+        if (!isValidYear && (row.name || row.agency)) {
+            console.warn("[SKIP] ปีไม่ถูกต้อง:", row.year, "| โครงการ:", row.name.substring(0, 40));
+        }
+        if (isSummaryRow) {
+            console.info("[SKIP] แถวสรุป:", row.name);
+        }
         // ถ้ามีข้อมูลชื่อโครงการ หรืออย่างน้อยมีระบุหน่วยงาน/จังหวัด และไม่ใช่แถวสรุปยอด ให้ดึงมาแสดงผลทั้งหมด
         if ((row.name || row.agency) && isValidYear && !isSummaryRow) {
             
