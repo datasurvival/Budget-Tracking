@@ -386,6 +386,9 @@ async function fetchSheetData(manual = false) {
 // ─────────────────────────────────────────────────────────────────
 //  CSV PARSER (เวอร์ชันป้องกันคอลัมน์เยื้อง/สลับช่องแบบอัจฉริยะ)
 // ─────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
+//  CSV PARSER (เวอร์ชันคลีนข้อมูลจังหวัดขั้นสุด ดักจับทุกรูปแบบการพิมพ์)
+// ─────────────────────────────────────────────────────────────────
 function parseCSV(raw) {
     const text = raw.replace(/^\uFEFF/, "").trim();
     const lines = text.split(/\r?\n/).filter(l => l.trim());
@@ -432,19 +435,16 @@ function parseCSV(raw) {
         let rawDisbursed = idx.disbursed >= 0 ? cols[idx.disbursed] : "0";
         let rawSpent = idx.spent >= 0 ? cols[idx.spent] : "0";
 
-        // 🚨 [ระบบแก้ไขอัจฉริยะ]: หากคอลัมน์สลับตำแหน่ง (ช่อง Year ได้ค่าเป็นข้อความยาว ๆ แทนตัวเลข 4 หลัก)
-        // ระบบจะวิ่งไปสแกนหาเซลล์ในแถวนั้น ๆ ที่มีลักษณะเป็นเลขปีงบประมาณ (256X หรือ 257X) ทันที
+        // ระบบแก้ไขอัจฉริยะหากคอลลัมน์เลื่อน
         if (rawYear && !/^\d{4}$/.test(rawYear)) {
             const matchedYearIdx = cols.findIndex(c => /^(256\d|257\d)$/.test(String(c).trim()));
             if (matchedYearIdx !== -1) {
                 rawYear = cols[matchedYearIdx].trim();
-                
-                // สลับสแกนหาช่องข้อความอื่นเพื่อ Mapping กลับให้ถูกต้อง
                 cols.forEach((cell) => {
                     const txt = String(cell).trim();
                     if (txt.includes("โครงการ") || txt.includes("แผนงาน")) {
                         rawName = txt;
-                    } else if ((txt.includes("จังหวัด") || txt.includes("อ่าวไทย")) && txt.length < 25) {
+                    } else if ((txt.includes("จังหวัด") || txt.includes("พัทลุง") || txt.includes("สงขลา") || txt.includes("สุราษฎร์") || txt.includes("ตรัง") || txt.includes("ชุมพร") || txt.includes("นครศรี")) && txt.length < 30) {
                         rawProvince = txt;
                     } else if (txt.includes("สำนักงาน") || txt.includes("แขวง") || txt.includes("มหาวิทยาลัย") || txt.includes("อบจ")) {
                         rawAgency = txt;
@@ -461,17 +461,16 @@ function parseCSV(raw) {
             budget:    toNum(rawBudget),
             disbursed: toNum(rawDisbursed),
             spent:     toNum(rawSpent),
-            province:  rawProvince,
+            province:  rawProvince.replace(/\s+/g, ""), // ตัดช่องว่างทั้งหมดที่อาจแฝงมาในชื่อจังหวัด
         };
 
-        // กรองเฉพาะแถวข้อมูลโครงการจริง (ปีงบประมาณต้องเป็นตัวเลข 4 หลัก และชื่อโครงการต้องไม่มีคำว่ารวม)
         const isValidYear = /^\d{4}$/.test(String(row.year));
         const isSummary   = /^รวม/.test(row.name.trim()) || row.name.includes("รวมทั้งสิ้น");
         
         if (row.name && isValidYear && !isSummary) {
-            // ปรับแต่งคำแสดงชื่อจังหวัดให้สม่ำเสมอเป็นมาตรฐานเดียวกัน
-            if (row.province.includes("สุราษฎร์ธานี")) row.province = "จังหวัดสุราษฎร์ธานี";
-            else if (row.province.includes("นครศรีธรรมราช")) row.province = "จังหวัดนครศรีธรรมราช";
+            // 🚨 คลีนข้อมูลจังหวัดให้เป็นมาตรฐานเดียวกันแบบยืดหยุ่นสูง (ป้องกันทุกจังหวัดพัง)
+            if (row.province.includes("สุราษฎร์")) row.province = "จังหวัดสุราษฎร์ธานี";
+            else if (row.province.includes("นครศรี")) row.province = "จังหวัดนครศรีธรรมราช";
             else if (row.province.includes("ชุมพร")) row.province = "จังหวัดชุมพร";
             else if (row.province.includes("พัทลุง")) row.province = "จังหวัดพัทลุง";
             else if (row.province.includes("สงขลา")) row.province = "จังหวัดสงขลา";
@@ -481,7 +480,6 @@ function parseCSV(raw) {
     });
     return result;
 }
-
 function splitLine(line, delim) {
     const result = []; let cur = ""; let inQ = false;
     for (let i = 0; i < line.length; i++) {
