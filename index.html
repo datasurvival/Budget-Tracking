@@ -14,14 +14,6 @@
         .card-shadow { box-shadow: 0 10px 25px -5px rgba(15,23,42,0.06), 0 8px 16px -6px rgba(15,23,42,0.04); }
         .border-premium { border-color: rgba(226,232,240,0.8); }
 
-        /* ── Logo Upload Zone ── */
-        #logo-drop-zone {
-            cursor: pointer;
-            transition: border-color .2s, background .2s;
-        }
-        #logo-drop-zone:hover { border-color: #f59e0b; background: rgba(245,158,11,.07); }
-        #logo-drop-zone.drag-over { border-color: #f59e0b; background: rgba(245,158,11,.12); }
-
         /* ── Loading overlay ── */
         #loading-overlay {
             position: fixed; inset: 0; background: rgba(11,19,41,.88);
@@ -37,12 +29,8 @@
             animation: spin .8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* ── Sync badge pulse ── */
-        @keyframes pulse-dot { 0%,100% { opacity:1; } 50% { opacity:.3; } }
         .pulse-dot { animation: pulse-dot 1.5s ease-in-out infinite; }
-
-        /* ── Row hover ── */
+        @keyframes pulse-dot { 0%,100% { opacity:1; } 50% { opacity:.3; } }
         tbody tr { transition: background .15s; }
     </style>
 </head>
@@ -56,7 +44,6 @@
 
 <header class="gradient-bg text-white px-6 py-4 flex flex-col md:flex-row justify-between items-center border-b border-slate-800 shadow-xl gap-4">
     <div class="flex items-center space-x-4">
-
         <div id="logo-container" class="relative shrink-0">
             <div id="logo-display"
                  class="w-16 h-16 rounded-full bg-slate-900 flex items-center justify-center border-2 border-amber-400 shadow-inner overflow-hidden">
@@ -71,7 +58,6 @@
                 </svg>
             </div>
         </div>
-
         <div>
             <div class="flex items-center space-x-2 flex-wrap gap-y-1">
                 <span class="bg-amber-400 text-slate-950 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">ระบบราชการ 4.0</span>
@@ -153,8 +139,8 @@
                 <div class="text-3xl font-black text-slate-800" id="kpi-budget">—</div>
                 <span class="text-[11px] text-slate-400 font-medium">ล้านบาท</span>
             </div>
-            <div class="text-xs font-bold text-emerald-600 flex items-center mt-2">
-                <i class="fa-solid fa-arrow-trend-up mr-1"></i> เป้าหมายตาม พ.ร.บ.
+            <div class="text-xs font-bold text-slate-500 flex items-center mt-2" id="kpi-budget-change">
+                ภาพรวมข้อมูล
             </div>
             <div class="absolute bottom-0 left-0 right-0 h-1.5 bg-sky-500"></div>
         </div>
@@ -169,8 +155,8 @@
                 <div class="text-3xl font-black text-slate-800" id="kpi-disbursed">—</div>
                 <span class="text-[11px] text-slate-400 font-medium">ล้านบาท</span>
             </div>
-            <div class="text-xs font-bold text-emerald-600 flex items-center mt-2" id="kpi-disbursed-change">
-                <i class="fa-solid fa-arrow-trend-up mr-1"></i> ดึงจากฐานข้อมูล Google ชีท
+            <div class="text-xs font-bold flex items-center mt-2" id="kpi-disbursed-change">
+                —
             </div>
             <div class="absolute bottom-0 left-0 right-0 h-1.5 bg-emerald-500"></div>
         </div>
@@ -185,8 +171,8 @@
                 <div class="text-3xl font-black text-slate-800" id="kpi-spent">—</div>
                 <span class="text-[11px] text-slate-400 font-medium">ล้านบาท</span>
             </div>
-            <div class="text-xs font-bold text-emerald-600 flex items-center mt-2" id="kpi-spent-change">
-                <i class="fa-solid fa-arrow-trend-up mr-1"></i> ดึงจากฐานข้อมูล Google ชีท
+            <div class="text-xs font-bold flex items-center mt-2" id="kpi-spent-change">
+                —
             </div>
             <div class="absolute bottom-0 left-0 right-0 h-1.5 bg-indigo-500"></div>
         </div>
@@ -318,19 +304,12 @@
 
 <footer class="bg-slate-900 text-slate-400 py-6 text-center text-xs border-t border-slate-800 mt-12">
     <p>© 2026 กลุ่มจังหวัดภาคใต้ฝั่งอ่าวไทย (สุราษฎร์ธานี · นครศรีธรรมราช · ชุมพร · พัทลุง · สงขลา)</p>
-    <p class="mt-1 text-[10px] text-slate-500">ขับเคลื่อนด้วยข้อมูลเชิงยุทธศาสตร์เพื่อการพัฒนาเชิงพื้นที่อย่างยั่งยืน</p>
 </footer>
 
 <script>
-// ─────────────────────────────────────────────────────────────────
-//  CONFIGURATION
-// ─────────────────────────────────────────────────────────────────
 const PUBLIC_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTWJjFTH30RjhrUC7-W6y_jIlUMdxHmuKp5S7qTi7GSU1C278hv6cPCuRJt6KEymAg9N3ByIOuWPDit/pub?output=csv";
 const AUTO_REFRESH_MS = 5 * 60 * 1000;
 
-// ─────────────────────────────────────────────────────────────────
-//  COLUMN MAP (คำสแกนหัวตาราง)
-// ─────────────────────────────────────────────────────────────────
 const COL = {
     id:         ["ลำดับ", "ลำดับที่", "no", "id"],
     year:       ["ปีงบประมาณ", "ปี", "year"],
@@ -342,9 +321,6 @@ const COL = {
     province:   ["เจ้าภาพ", "เจ้าภาพจังหวัด", "จังหวัด", "จังหวัดเจ้าภาพ", "province"],
 };
 
-// ─────────────────────────────────────────────────────────────────
-//  GLOBAL STATE
-// ─────────────────────────────────────────────────────────────────
 let RAW_DATABASE       = [];
 let pctDisbursedChart  = null;
 let pctSpentChart      = null;
@@ -360,22 +336,16 @@ window.onload = async function () {
 async function fetchSheetData(manual = false) {
     showLoading(manual ? "รีเฟรชข้อมูล…" : "กำลังโหลดข้อมูลจาก Google Sheets…");
     hideError();
-
-    const url = `${PUBLIC_CSV_URL}&cachebust=${Date.now()}`;
-
     try {
-        const res = await fetch(url);
+        const res = await fetch(`${PUBLIC_CSV_URL}&cachebust=${Date.now()}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const csv = await res.text();
         RAW_DATABASE = parseCSV(csv);
-
-        if (RAW_DATABASE.length === 0) throw new Error("ไม่พบข้อมูลที่ตรงตามเงื่อนไขหรือหัวตารางไม่ถูกต้อง");
-
+        if (RAW_DATABASE.length === 0) throw new Error("ไม่พบข้อมูลหรือหัวตารางไม่ถูกต้อง");
         updateFilterDropdowns();
         applyFilters();
         setSyncOk();
     } catch (err) {
-        console.error("fetchSheetData error:", err);
         showError(err.message);
         setSyncError();
     } finally {
@@ -383,12 +353,6 @@ async function fetchSheetData(manual = false) {
     }
 }
 
-// ─────────────────────────────────────────────────────────────────
-//  CSV PARSER (เวอร์ชันป้องกันคอลัมน์เยื้อง/สลับช่องแบบอัจฉริยะ)
-// ─────────────────────────────────────────────────────────────────
-// ─────────────────────────────────────────────────────────────────
-//  CSV PARSER (เวอร์ชันคลีนข้อมูลจังหวัดขั้นสุด ดักจับทุกรูปแบบการพิมพ์)
-// ─────────────────────────────────────────────────────────────────
 function parseCSV(raw) {
     const text = raw.replace(/^\uFEFF/, "").trim();
     const lines = text.split(/\r?\n/).filter(l => l.trim());
@@ -412,14 +376,9 @@ function parseCSV(raw) {
     }
 
     let idx = {
-        id:        findCol(COL.id),
-        year:      findCol(COL.year),
-        name:      findCol(COL.name),
-        agency:    findCol(COL.agency),
-        budget:    findCol(COL.budget),
-        disbursed: findCol(COL.disbursed),
-        spent:     findCol(COL.spent),
-        province:  findCol(COL.province),
+        id: findCol(COL.id), year: findCol(COL.year), name: findCol(COL.name),
+        agency: findCol(COL.agency), budget: findCol(COL.budget),
+        disbursed: findCol(COL.disbursed), spent: findCol(COL.spent), province: findCol(COL.province)
     };
 
     const result = [];
@@ -435,51 +394,40 @@ function parseCSV(raw) {
         let rawDisbursed = idx.disbursed >= 0 ? cols[idx.disbursed] : "0";
         let rawSpent = idx.spent >= 0 ? cols[idx.spent] : "0";
 
-        // ระบบแก้ไขอัจฉริยะหากคอลลัมน์เลื่อน
         if (rawYear && !/^\d{4}$/.test(rawYear)) {
             const matchedYearIdx = cols.findIndex(c => /^(256\d|257\d)$/.test(String(c).trim()));
             if (matchedYearIdx !== -1) {
                 rawYear = cols[matchedYearIdx].trim();
                 cols.forEach((cell) => {
                     const txt = String(cell).trim();
-                    if (txt.includes("โครงการ") || txt.includes("แผนงาน")) {
-                        rawName = txt;
-                    } else if ((txt.includes("จังหวัด") || txt.includes("พัทลุง") || txt.includes("สงขลา") || txt.includes("สุราษฎร์") || txt.includes("ตรัง") || txt.includes("ชุมพร") || txt.includes("นครศรี")) && txt.length < 30) {
-                        rawProvince = txt;
-                    } else if (txt.includes("สำนักงาน") || txt.includes("แขวง") || txt.includes("มหาวิทยาลัย") || txt.includes("อบจ")) {
-                        rawAgency = txt;
-                    }
+                    if (txt.includes("โครงการ") || txt.includes("แผนงาน")) rawName = txt;
+                    else if ((txt.includes("จังหวัด") || txt.includes("พัทลุง") || txt.includes("สงขลา") || txt.includes("สุราษฎร์") || txt.includes("ตรัง") || txt.includes("ชุมพร") || txt.includes("นครศรี")) && txt.length < 30) rawProvince = txt;
+                    else if (txt.includes("สำนักงาน") || txt.includes("แขวง") || txt.includes("มหาวิทยาลัย")) rawAgency = txt;
                 });
             }
         }
 
         const row = {
-            id:        i + 1,
-            year:      rawYear,
-            name:      rawName,
-            agency:    rawAgency,
-            budget:    toNum(rawBudget),
-            disbursed: toNum(rawDisbursed),
-            spent:     toNum(rawSpent),
-            province:  rawProvince.replace(/\s+/g, ""), // ตัดช่องว่างทั้งหมดที่อาจแฝงมาในชื่อจังหวัด
+            id: i + 1, year: rawYear, name: rawName, agency: rawAgency,
+            budget: toNum(rawBudget), disbursed: toNum(rawDisbursed), spent: toNum(rawSpent),
+            province: rawProvince.replace(/\s+/g, "")
         };
 
         const isValidYear = /^\d{4}$/.test(String(row.year));
         const isSummary   = /^รวม/.test(row.name.trim()) || row.name.includes("รวมทั้งสิ้น");
         
         if (row.name && isValidYear && !isSummary) {
-            // 🚨 คลีนข้อมูลจังหวัดให้เป็นมาตรฐานเดียวกันแบบยืดหยุ่นสูง (ป้องกันทุกจังหวัดพัง)
             if (row.province.includes("สุราษฎร์")) row.province = "จังหวัดสุราษฎร์ธานี";
             else if (row.province.includes("นครศรี")) row.province = "จังหวัดนครศรีธรรมราช";
             else if (row.province.includes("ชุมพร")) row.province = "จังหวัดชุมพร";
             else if (row.province.includes("พัทลุง")) row.province = "จังหวัดพัทลุง";
             else if (row.province.includes("สงขลา")) row.province = "จังหวัดสงขลา";
-
             result.push(row);
         }
     });
     return result;
 }
+
 function splitLine(line, delim) {
     const result = []; let cur = ""; let inQ = false;
     for (let i = 0; i < line.length; i++) {
@@ -488,8 +436,7 @@ function splitLine(line, delim) {
         if (c === delim && !inQ) { result.push(cur); cur = ""; continue; }
         cur += c;
     }
-    result.push(cur);
-    return result;
+    result.push(cur); return result;
 }
 
 function toNum(v) {
@@ -500,9 +447,6 @@ function toNum(v) {
     return isNaN(n) ? 0 : n;
 }
 
-// ─────────────────────────────────────────────────────────────────
-//  FILTER & RENDER LOGIC
-// ─────────────────────────────────────────────────────────────────
 function updateFilterDropdowns() {
     const years     = [...new Set(RAW_DATABASE.map(r => r.year).filter(Boolean))].sort();
     const provinces = [...new Set(RAW_DATABASE.map(r => r.province).filter(Boolean))].sort();
@@ -520,19 +464,18 @@ function updateFilterDropdowns() {
     if ([...provSel.options].some(o => o.value === curProv)) provSel.value = curProv;
 }
 
-function getFilteredDataset() {
+function applyFilters() {
     const year  = document.getElementById("filter-year").value;
     const prov  = document.getElementById("filter-province").value;
     const q     = document.getElementById("search-agency").value.toLowerCase().trim();
-    return RAW_DATABASE.filter(r =>
+
+    // 1. ดึงข้อมูลปีปัจจุบันตามตัวกรอง
+    const data = RAW_DATABASE.filter(r =>
         (year === "ALL" || r.year === year) &&
         (prov === "ALL" || r.province === prov) &&
         (q === "" || r.name.toLowerCase().includes(q) || r.agency.toLowerCase().includes(q) || r.province.toLowerCase().includes(q))
     );
-}
 
-function applyFilters() {
-    const data = getFilteredDataset();
     let totalBudget = 0, totalDisbursed = 0, totalSpent = 0, active = 0;
     data.forEach(r => {
         totalBudget    += r.budget;
@@ -540,6 +483,7 @@ function applyFilters() {
         totalSpent     += r.spent;
         if (r.disbursed > 0 || r.spent > 0) active++;
     });
+
     const pctD = totalBudget > 0 ? (totalDisbursed / totalBudget) * 100 : 0;
     const pctS = totalBudget > 0 ? (totalSpent     / totalBudget) * 100 : 0;
 
@@ -551,9 +495,60 @@ function applyFilters() {
     document.getElementById("kpi-projects").innerText  = data.length;
     document.getElementById("kpi-active-projects").innerText = `ดำเนินการแล้ว ${active} โครงการ`;
 
+    // 2. 💡 ฟังก์ชันคำนวณเปรียบเทียบกับปีก่อนหน้า (YoY Calculation)
+    renderYoYBadges(year, prov, q, totalBudget, totalDisbursed, totalSpent);
+
     updateDonutProgress(pctD, pctS);
     renderBarChart(data);
     renderTable(data);
+}
+
+function renderYoYBadges(year, prov, q, curBud, curDis, curSp) {
+    const bBadge = document.getElementById("kpi-budget-change");
+    const dBadge = document.getElementById("kpi-disbursed-change");
+    const sBadge = document.getElementById("kpi-spent-change");
+
+    if (year === "ALL") {
+        bBadge.className = "text-xs font-bold text-slate-500 mt-2";
+        bBadge.innerHTML = `<i class="fa-solid fa-chart-line mr-1"></i> ภาพรวมทุกปีงบประมาณ`;
+        dBadge.className = "text-xs font-bold text-slate-500 mt-2";
+        dBadge.innerHTML = `<i class="fa-solid fa-chart-line mr-1"></i> ภาพรวมทุกปีงบประมาณ`;
+        sBadge.className = "text-xs font-bold text-slate-500 mt-2";
+        sBadge.innerHTML = `<i class="fa-solid fa-chart-line mr-1"></i> ภาพรวมทุกปีงบประมาณ`;
+        return;
+    }
+
+    // คำนวณหาปีก่อนหน้า
+    const prevYear = String(parseInt(year) - 1);
+    const prevData = RAW_DATABASE.filter(r =>
+        r.year === prevYear && (prov === "ALL" || r.province === prov) &&
+        (q === "" || r.name.toLowerCase().includes(q) || r.agency.toLowerCase().includes(q))
+    );
+
+    let prevBud = 0, prevDis = 0, prevSp = 0;
+    prevData.forEach(r => { prevBud += r.budget; prevDis += r.disbursed; prevSp += r.spent; });
+
+    bBadge.className = "text-xs font-bold text-slate-400 mt-2";
+    bBadge.innerHTML = `<i class="fa-solid fa-calendar mr-1"></i> เปรียบเทียบกับปี ${prevYear}`;
+
+    const setBadgeHTML = (element, curVal, prevVal) => {
+        if (prevVal <= 0) {
+            element.className = "text-xs font-bold text-slate-400 mt-2";
+            element.innerHTML = `<i class="fa-solid fa-minus mr-1"></i> ไม่มีข้อมูลปีก่อนหน้า`;
+            return;
+        }
+        const diffPct = ((curVal - prevVal) / prevVal) * 100;
+        if (diffPct >= 0) {
+            element.className = "text-xs font-bold text-emerald-600 mt-2";
+            element.innerHTML = `<i class="fa-solid fa-arrow-trend-up mr-1"></i> +${diffPct.toFixed(2)}% จากปี ${prevYear}`;
+        } else {
+            element.className = "text-xs font-bold text-rose-500 mt-2";
+            element.innerHTML = `<i class="fa-solid fa-arrow-trend-down mr-1"></i> ${diffPct.toFixed(2)}% จากปี ${prevYear}`;
+        }
+    };
+
+    setBadgeHTML(dBadge, curDis, prevDis);
+    setBadgeHTML(sBadge, curSp, prevSp);
 }
 
 function resetFilters() {
@@ -563,9 +558,6 @@ function resetFilters() {
     applyFilters();
 }
 
-// ─────────────────────────────────────────────────────────────────
-//  CHARTS MANAGEMENT
-// ─────────────────────────────────────────────────────────────────
 function buildDonutCharts() {
     const mkDonut = (id, color) => new Chart(document.getElementById(id).getContext("2d"), {
         type: "doughnut",
@@ -580,24 +572,16 @@ function buildDonutCharts() {
 }
 
 function updateDonutProgress(pD, pS) {
-    const validPD = Math.min(100, Math.max(0, pD));
-    const validPS = Math.min(100, Math.max(0, pS));
-    pctDisbursedChart.data.datasets[0].data = [validPD, 100 - validPD];
+    pctDisbursedChart.data.datasets[0].data = [Math.min(100, Math.max(0, pD)), 100 - Math.min(100, Math.max(0, pD))];
     pctDisbursedChart.update();
-    pctSpentChart.data.datasets[0].data     = [validPS, 100 - validPS];
+    pctSpentChart.data.datasets[0].data     = [Math.min(100, Math.max(0, pS)), 100 - Math.min(100, Math.max(0, pS))];
     pctSpentChart.update();
 }
 
 function toggleLabelMode(mode) {
     currentLabelMode = mode;
-    document.getElementById("btn-lbl-code").className =
-        mode === "code"
-        ? "px-2.5 py-1 rounded-lg font-bold transition-all bg-white text-slate-800 shadow-sm"
-        : "px-2.5 py-1 rounded-lg font-bold transition-all text-slate-500 hover:text-slate-800";
-    document.getElementById("btn-lbl-text").className =
-        mode === "text"
-        ? "px-2.5 py-1 rounded-lg font-bold transition-all bg-white text-slate-800 shadow-sm"
-        : "px-2.5 py-1 rounded-lg font-bold transition-all text-slate-500 hover:text-slate-800";
+    document.getElementById("btn-lbl-code").className = mode === "code" ? "px-2.5 py-1 rounded-lg font-bold transition-all bg-white text-slate-800 shadow-sm" : "px-2.5 py-1 rounded-lg font-bold transition-all text-slate-500 hover:text-slate-800";
+    document.getElementById("btn-lbl-text").className = mode === "text" ? "px-2.5 py-1 rounded-lg font-bold transition-all bg-white text-slate-800 shadow-sm" : "px-2.5 py-1 rounded-lg font-bold transition-all text-slate-500 hover:text-slate-800";
     applyFilters();
 }
 
@@ -610,11 +594,7 @@ function renderBarChart(filteredData) {
     let sorted   = [...filteredData].sort((a, b) => b.budget - a.budget);
     if (limit !== "ALL") sorted = sorted.slice(0, parseInt(limit));
 
-    const labels    = sorted.map((p, i) =>
-        currentLabelMode === "code"
-        ? `P${i + 1}`
-        : `P${i + 1}: ${p.name.replace("โครงการ", "").substring(0, 12)}…`
-    );
+    const labels    = sorted.map((p, i) => currentLabelMode === "code" ? `P${i + 1}` : `P${i + 1}: ${p.name.replace("โครงการ", "").substring(0, 12)}…`);
     const fullNames = sorted.map(p => `[ปี ${p.year}] ${p.name}`);
     const mln       = v => (v / 1e6).toFixed(2);
 
@@ -623,66 +603,30 @@ function renderBarChart(filteredData) {
         data: {
             labels,
             datasets: [
-                { label: "วงเงินงบประมาณรวม",      data: sorted.map(p => mln(p.budget)),
-                  backgroundColor: "rgba(226,232,240,0.9)", borderColor: "rgba(203,213,225,1)", borderWidth: 1.5,
-                  barPercentage: 0.85, categoryPercentage: 0.75, order: 3 },
-                { label: "ผลการใช้จ่ายจริง (Spent)", data: sorted.map(p => mln(p.spent)),
-                  backgroundColor: "rgba(99,102,241,0.95)",
-                  barPercentage: 0.55, categoryPercentage: 0.75, order: 2 },
-                { label: "ผลการเบิกจ่าย (Disbursed)", data: sorted.map(p => mln(p.disbursed)),
-                  backgroundColor: "rgba(56,189,248,1)",
-                  barPercentage: 0.25, categoryPercentage: 0.75, order: 1 },
+                { label: "วงเงินงบประมาณรวม", data: sorted.map(p => mln(p.budget)), backgroundColor: "rgba(226,232,240,0.9)", borderColor: "rgba(203,213,225,1)", borderWidth: 1.5, barPercentage: 0.85, order: 3 },
+                { label: "ผลการใช้จ่ายจริง (Spent)", data: sorted.map(p => mln(p.spent)), backgroundColor: "rgba(99,102,241,0.95)", barPercentage: 0.55, order: 2 },
+                { label: "ผลการเบิกจ่าย (Disbursed)", data: sorted.map(p => mln(p.disbursed)), backgroundColor: "rgba(56,189,248,1)", barPercentage: 0.25, order: 1 },
             ]
         },
         options: {
             responsive: true, maintainAspectRatio: false, grouped: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    backgroundColor: "rgba(15,23,42,.95)",
-                    titleFont: { size: 12, family: "Sarabun", weight: "bold" },
-                    bodyFont:  { size: 11, family: "Sarabun" },
-                    padding: 12, cornerRadius: 8,
-                    callbacks: {
-                        title: ctx => fullNames[ctx[0].dataIndex],
-                        label: ctx => ` ${ctx.dataset.label}: ${ctx.raw} ล้านบาท`
-                    }
-                }
-            },
-            scales: {
-                x: { grid: { display: false }, ticks: { font: { size: 11, family: "Sarabun", weight: "bold" }, color: "#475569", maxRotation: 45, minRotation: 45 } },
-                y: { beginAtZero: true, grid: { color: "#f1f5f9" },
-                     ticks: { font: { size: 11, family: "Sarabun" } },
-                     title: { display: true, text: "งบประมาณ (ล้านบาท)", font: { size: 11, family: "Sarabun", weight: "bold" } } }
-            }
+            plugins: { legend: { display: false }, tooltip: { callbacks: { title: ctx => fullNames[ctx[0].dataIndex], label: ctx => ` ${ctx.dataset.label}: ${ctx.raw} ล้านบาท` } } },
+            scales: { x: { ticks: { font: { family: "Sarabun" } } }, y: { beginAtZero: true, ticks: { font: { family: "Sarabun" } } } }
         }
     });
 }
 
-// ─────────────────────────────────────────────────────────────────
-//  TABLE RENDER
-// ─────────────────────────────────────────────────────────────────
 function renderTable(dataset) {
-    const tbody = document.getElementById("project-table-body");
-    tbody.innerHTML = "";
+    const tbody = document.getElementById("project-table-body"); tbody.innerHTML = "";
     let sumBudget = 0;
-
     if (!dataset.length) {
-        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-10 text-slate-400">
-            <i class="fa-solid fa-folder-open text-3xl mb-2 block"></i>ไม่พบข้อมูลตามเงื่อนไขที่กรอง</td></tr>`;
-        document.getElementById("table-count-info").innerText  = "แสดง 0 รายการ";
-        document.getElementById("table-total-sum").innerText   = "0.00";
-        return;
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-10 text-slate-400">ไม่พบข้อมูลตามเงื่อนไข</td></tr>`;
+        document.getElementById("table-total-sum").innerText = "0.00"; return;
     }
-
     dataset.forEach((item, i) => {
         sumBudget += item.budget;
         const pct = item.budget > 0 ? (item.disbursed / item.budget) * 100 : 0;
-        let cls = "bg-slate-100 text-slate-600 border-slate-200";
-        if (pct >= 90) cls = "bg-emerald-50 text-emerald-700 border-emerald-100";
-        else if (pct >= 50) cls = "bg-sky-50 text-sky-700 border-sky-100";
-        else if (pct > 0)   cls = "bg-amber-50 text-amber-700 border-amber-100";
-
+        let cls = pct >= 90 ? "bg-emerald-50 text-emerald-700 border-emerald-100" : pct >= 50 ? "bg-sky-50 text-sky-700 border-sky-100" : pct > 0 ? "bg-amber-50 text-amber-700 border-amber-100" : "bg-slate-100 text-slate-600 border-slate-200";
         tbody.insertAdjacentHTML("beforeend", `
             <tr class="hover:bg-slate-50/70">
                 <td class="py-3 px-4 text-center text-slate-400 font-bold">P${i + 1}</td>
@@ -693,73 +637,29 @@ function renderTable(dataset) {
                 <td class="py-3 px-4 text-right font-medium text-slate-700">${fmt(item.budget)}</td>
                 <td class="py-3 px-4 text-right text-sky-600 font-bold">${item.disbursed > 0 ? fmt(item.disbursed) : "—"}</td>
                 <td class="py-3 px-4 text-right text-indigo-600 font-bold">${item.spent > 0 ? fmt(item.spent) : "—"}</td>
-                <td class="py-3 px-4 text-center">
-                    <span class="inline-block px-2.5 py-1 rounded-full text-xs font-black border ${cls}">${pct.toFixed(1)}%</span>
-                </td>
+                <td class="py-3 px-4 text-center"><span class="inline-block px-2.5 py-1 rounded-full text-xs font-black border ${cls}">${pct.toFixed(1)}%</span></td>
             </tr>`);
     });
-
     document.getElementById("table-count-info").innerText = `แสดงทั้งหมด ${dataset.length} รายการ`;
     document.getElementById("table-total-sum").innerText  = fmt(sumBudget);
 }
 
-// ─────────────────────────────────────────────────────────────────
-//  EXPORT EXCEL/CSV
-// ─────────────────────────────────────────────────────────────────
 function exportToCSV() {
-    const data = getFilteredDataset();
-    if (!data.length) { alert("ไม่มีข้อมูลที่จะส่งออก"); return; }
-
-    let csv = "\uFEFFลำดับ,ปีงบประมาณ,โครงการ/แผนงาน,หน่วยดำเนินการ,เจ้าภาพจังหวัด,งบประมาณ (บาท),เบิกจ่าย (บาท),ใช้จ่ายจริง (บาท),ร้อยละการเบิกจ่าย\n";
-    data.forEach((r, i) => {
-        const pct = r.budget > 0 ? ((r.disbursed / r.budget) * 100).toFixed(2) : 0;
-        csv += `${i + 1},${r.year},"${r.name.replace(/"/g, '""')}","${r.agency.replace(/"/g, '""')}",${r.province},${r.budget},${r.disbursed},${r.spent},${pct}%\n`;
-    });
-
-    const a = Object.assign(document.createElement("a"), {
-        href:     encodeURI("data:text/csv;charset=utf-8," + csv),
-        download: `รายงานงบประมาณ_ภาคใต้ฝั่งอ่าวไทย_${new Date().toLocaleDateString("th-TH")}.csv`
-    });
+    const data = RAW_DATABASE;
+    if (!data.length) return;
+    let csv = "\uFEFFลำดับ,ปีงบประมาณ,โครงการ,หน่วยดำเนินการ,จังหวัด,งบประมาณ,เบิกจ่าย,ใช้จ่ายจริง\n";
+    data.forEach((r, i) => { csv += `${i + 1},${r.year},"${r.name}","${r.agency}",${r.province},${r.budget},${r.disbursed},${r.spent}\n`; });
+    const a = Object.assign(document.createElement("a"), { href: encodeURI("data:text/csv;charset=utf-8," + csv), download: `รายงานงบประมาณ.csv` });
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 
-// ─────────────────────────────────────────────────────────────────
-//  UI HELPERS
-// ─────────────────────────────────────────────────────────────────
-function fmt(num, dec = 2) {
-    return new Intl.NumberFormat("th-TH", { minimumFractionDigits: dec, maximumFractionDigits: dec }).format(num);
-}
-
-function showLoading(msg) {
-    document.getElementById("loading-overlay").classList.remove("hidden");
-    document.getElementById("loading-sub").innerText = msg || "";
-}
-function hideLoading() {
-    document.getElementById("loading-overlay").classList.add("hidden");
-    const now = new Date().toLocaleString("th-TH", { dateStyle: "medium", timeStyle: "short" });
-    document.getElementById("last-updated-text").innerText = `อัปเดตล่าสุด: ${now}`;
-}
-function showError(detail) {
-    const b = document.getElementById("error-banner");
-    b.classList.remove("hidden");
-    document.getElementById("error-detail").innerText = detail;
-}
-function hideError() {
-    document.getElementById("error-banner").classList.add("hidden");
-}
-function setSyncOk() {
-    const badge = document.getElementById("sync-badge");
-    badge.classList.remove("border-red-700");
-    badge.classList.add("border-slate-700");
-    document.getElementById("sync-status-text").innerText = "เชื่อมต่อ Google Sheets";
-    badge.querySelector(".pulse-dot").classList.replace("bg-red-400", "bg-emerald-400");
-}
-function setSyncError() {
-    const badge = document.getElementById("sync-badge");
-    badge.classList.add("border-red-700");
-    document.getElementById("sync-status-text").innerText = "โหลดข้อมูลไม่สำเร็จ";
-    badge.querySelector(".pulse-dot").classList.replace("bg-emerald-400", "bg-red-400");
-}
+function fmt(num, dec = 2) { return new Intl.NumberFormat("th-TH", { minimumFractionDigits: dec, maximumFractionDigits: dec }).format(num); }
+function showLoading(msg) { document.getElementById("loading-overlay").classList.remove("hidden"); document.getElementById("loading-sub").innerText = msg || ""; }
+function hideLoading() { document.getElementById("loading-overlay").classList.add("hidden"); const now = new Date().toLocaleString("th-TH", { dateStyle: "medium", timeStyle: "short" }); document.getElementById("last-updated-text").innerText = `อัปเดตล่าสุด: ${now}`; }
+function showError(detail) { document.getElementById("error-banner").classList.remove("hidden"); document.getElementById("error-detail").innerText = detail; }
+function hideError() { document.getElementById("error-banner").classList.add("hidden"); }
+function setSyncOk() { const badge = document.getElementById("sync-badge"); badge.className = "inline-flex items-center bg-slate-800/80 border border-slate-700 text-slate-300 text-xs px-3 py-1.5 rounded-xl font-medium gap-1.5"; document.getElementById("sync-status-text").innerText = "เชื่อมต่อ Google Sheets"; badge.querySelector(".pulse-dot").className = "pulse-dot w-2 h-2 rounded-full bg-emerald-400"; }
+function setSyncError() { const badge = document.getElementById("sync-badge"); badge.className = "inline-flex items-center bg-slate-800/80 border border-red-700 text-slate-300 text-xs px-3 py-1.5 rounded-xl font-medium gap-1.5"; document.getElementById("sync-status-text").innerText = "โหลดข้อมูลไม่สำเร็จ"; badge.querySelector(".pulse-dot").className = "pulse-dot w-2 h-2 rounded-full bg-red-400"; }
 </script>
 </body>
 </html>
