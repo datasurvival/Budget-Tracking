@@ -336,9 +336,12 @@ window.onload = async function () {
 async function fetchSheetData(manual = false) {
     showLoading(manual ? "รีเฟรชข้อมูล…" : "กำลังโหลดข้อมูลจาก Google Sheets…");
     hideError();
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 12000); // timeout 12 วินาที
     try {
-        const res = await fetch(`${PUBLIC_CSV_URL}&cachebust=${Date.now()}`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const res = await fetch(`${PUBLIC_CSV_URL}&cachebust=${Date.now()}`, { signal: controller.signal });
+        clearTimeout(timer);
+        if (!res.ok) throw new Error(`HTTP ${res.status} — ตรวจสอบว่า Google Sheet ได้เผยแพร่เป็นสาธารณะแล้ว`);
         const csv = await res.text();
         RAW_DATABASE = parseCSV(csv);
         if (RAW_DATABASE.length === 0) throw new Error("ไม่พบข้อมูลหรือหัวตารางไม่ถูกต้อง");
@@ -346,10 +349,14 @@ async function fetchSheetData(manual = false) {
         applyFilters();
         setSyncOk();
     } catch (err) {
-        showError(err.message);
+        clearTimeout(timer);
+        const msg = err.name === "AbortError"
+            ? "หมดเวลาเชื่อมต่อ (timeout) — ตรวจสอบการตั้งค่า Google Sheets หรือการเชื่อมต่ออินเทอร์เน็ต"
+            : err.message;
+        showError(msg);
         setSyncError();
     } finally {
-        hideLoading();
+        hideLoading(); // ปิด loading เสมอ ไม่ว่าจะสำเร็จหรือไม่
     }
 }
 
