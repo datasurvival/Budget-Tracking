@@ -435,7 +435,7 @@ function parseCSV(raw) {
         let rawSpent     = idx.spent >= 0 ? cols[idx.spent] : "0";
 
         // ระบบตรวจจับกรณีคอลัมน์ขยับเลื่อนใน Google Sheets
-        if (rawYear && !/^\d{4}$/.test(rawYear)) {
+        if (rawYear && !/^(256\d|257\d)$/.test(rawYear)) {
             const matchedYearIdx = cols.findIndex(c => /^(256\d|257\d)$/.test(String(c).trim()));
             if (matchedYearIdx !== -1) {
                 rawYear = cols[matchedYearIdx].trim();
@@ -465,7 +465,9 @@ function parseCSV(raw) {
 
         // ตรวจสอบรูปแบบปีงบประมาณ: ตัด .0 ออกก่อน (กรณี Google Sheets export เป็น 2568.0)
         row.year = row.year.replace(/\.0+$/, "").trim();
-        const isValidYear = /^\d{4}$/.test(row.year);
+        // เช็คว่าเป็นปีงบประมาณจริง (2560-2579) ไม่ใช่แค่ 4 หลัก
+        // ป้องกันตัวเลขในชื่อโครงการ เช่น 2550, 5050 ถูกอ่านเป็นปีงบประมาณโดยผิดพลาด
+        const isValidYear = /^(256\d|257\d)$/.test(row.year);
         
         // ปรับการดักจับแถว "รวม" ให้แม่นยำขึ้น: ตรงกันเป๊ะเท่านั้น ไม่ใช้ includes เพราะจะตัดชื่อโครงการที่มีคำ "รวม" ออก
         const nameTrimmed = row.name.trim();
