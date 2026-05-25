@@ -481,7 +481,7 @@ function parseCSV(raw) {
             province:  idx.province  >= 0 ? (cols[idx.province] || "").trim() : "",
         };
         // Skip summary rows (รวม) and rows with no valid year number
-        const isValidYear = /^\d{4}/.test(String(row.year).trim());
+        const isValidYear = /\d+/.test(String(row.year)); 
         const isSummary   = /^รวม/.test(row.name.trim());
         if (row.name && isValidYear && !isSummary) result.push(row);
     });
