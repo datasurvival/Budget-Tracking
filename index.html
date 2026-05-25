@@ -496,13 +496,6 @@ function applyFilters() {
     document.getElementById("kpi-active-projects").innerText = `ดำเนินการแล้ว ${active} โครงการ`;
 
     // 2. 💡 ฟังก์ชันคำนวณเปรียบเทียบกับปีก่อนหน้า (YoY Calculation)
-    renderYoYBadges(year, prov, q, totalBudget, totalDisbursed, totalSpent);
-
-    updateDonutProgress(pctD, pctS);
-    renderBarChart(data);
-    renderTable(data);
-}
-
 function renderYoYBadges(year, prov, q, curBud, curDis, curSp) {
     const bBadge = document.getElementById("kpi-budget-change");
     const dBadge = document.getElementById("kpi-disbursed-change");
@@ -518,23 +511,29 @@ function renderYoYBadges(year, prov, q, curBud, curDis, curSp) {
         return;
     }
 
-    // คำนวณหาปีก่อนหน้า
+    // คำนวณหาปีก่อนหน้า (กรองเฉพาะ ปี และ จังหวัด เพื่อให้ได้ยอดรวมที่แท้จริงมาเปรียบเทียบ)
     const prevYear = String(parseInt(year) - 1);
     const prevData = RAW_DATABASE.filter(r =>
-        r.year === prevYear && (prov === "ALL" || r.province === prov) &&
-        (q === "" || r.name.toLowerCase().includes(q) || r.agency.toLowerCase().includes(q))
+        r.year === prevYear && 
+        (prov === "ALL" || r.province === prov)
     );
 
     let prevBud = 0, prevDis = 0, prevSp = 0;
-    prevData.forEach(r => { prevBud += r.budget; prevDis += r.disbursed; prevSp += r.spent; });
+    prevData.forEach(r => { 
+        prevBud += r.budget; 
+        prevDis += r.disbursed; 
+        prevSp += r.spent; 
+    });
 
+    // แสดงข้อความบอกว่ากำลังเปรียบเทียบกับปีไหนที่การ์ดงบประมาณรวม
     bBadge.className = "text-xs font-bold text-slate-400 mt-2";
     bBadge.innerHTML = `<i class="fa-solid fa-calendar mr-1"></i> เปรียบเทียบกับปี ${prevYear}`;
 
+    // ฟังก์ชันช่วยเขียนแสดงผล % หักลบ
     const setBadgeHTML = (element, curVal, prevVal) => {
         if (prevVal <= 0) {
             element.className = "text-xs font-bold text-slate-400 mt-2";
-            element.innerHTML = `<i class="fa-solid fa-minus mr-1"></i> ไม่มีข้อมูลปีก่อนหน้า`;
+            element.innerHTML = `<i class="fa-solid fa-minus mr-1"></i> ไม่มีข้อมูลปี ${prevYear}`;
             return;
         }
         const diffPct = ((curVal - prevVal) / prevVal) * 100;
