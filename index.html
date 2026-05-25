@@ -308,6 +308,7 @@
 
 <script>
 const PUBLIC_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTWJjFTH30RjhrUC7-W6y_jIlUMdxHmuKp5S7qTi7GSU1C278hv6cPCuRJt6KEymAg9N3ByIOuWPDit/pub?output=csv";
+const CORS_PROXY     = "https://api.allorigins.win/raw?url=";
 const AUTO_REFRESH_MS = 5 * 60 * 1000;
 
 const COL = {
@@ -336,28 +337,54 @@ window.onload = async function () {
 async function fetchSheetData(manual = false) {
     showLoading(manual ? "รีเฟรชข้อมูล…" : "กำลังโหลดข้อมูลจาก Google Sheets…");
     hideError();
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 12000); // timeout 12 วินาที
     try {
-        const res = await fetch(`${PUBLIC_CSV_URL}&cachebust=${Date.now()}`, { signal: controller.signal });
-        clearTimeout(timer);
-        if (!res.ok) throw new Error(`HTTP ${res.status} — ตรวจสอบว่า Google Sheet ได้เผยแพร่เป็นสาธารณะแล้ว`);
-        const csv = await res.text();
+        const csv = await fetchCSVWithFallback();
         RAW_DATABASE = parseCSV(csv);
-        if (RAW_DATABASE.length === 0) throw new Error("ไม่พบข้อมูลหรือหัวตารางไม่ถูกต้อง");
+        if (RAW_DATABASE.length === 0) throw new Error("ไม่พบข้อมูลหรือหัวตารางไม่ถูกต้อง — ตรวจสอบชื่อคอลัมน์ใน Google Sheets");
         updateFilterDropdowns();
         applyFilters();
         setSyncOk();
     } catch (err) {
-        clearTimeout(timer);
-        const msg = err.name === "AbortError"
-            ? "หมดเวลาเชื่อมต่อ (timeout) — ตรวจสอบการตั้งค่า Google Sheets หรือการเชื่อมต่ออินเทอร์เน็ต"
-            : err.message;
-        showError(msg);
+        showError(err.message);
         setSyncError();
     } finally {
-        hideLoading(); // ปิด loading เสมอ ไม่ว่าจะสำเร็จหรือไม่
+        hideLoading();
     }
+}
+
+async function fetchCSVWithFallback() {
+    const cachebust = Date.now();
+
+    // ลอง fetch ตรงก่อน (บางกรณีทำงานได้ โดยเฉพาะ local dev)
+    try {
+        const ctrl = new AbortController();
+        const t = setTimeout(() => ctrl.abort(), 5000);
+        const r = await fetch(PUBLIC_CSV_URL + "&cachebust=" + cachebust, { signal: ctrl.signal });
+        clearTimeout(t);
+        if (r.ok) {
+            const txt = await r.text();
+            if (txt && txt.trim().length > 10) return txt;
+        }
+    } catch (_) {}
+
+    // Fallback: ผ่าน CORS proxy allorigins.win
+    document.getElementById("loading-sub").innerText = "กำลังเชื่อมต่อผ่าน proxy…";
+    const proxyUrl = CORS_PROXY + encodeURIComponent(PUBLIC_CSV_URL + "&cachebust=" + cachebust);
+    const ctrl2 = new AbortController();
+    const t2 = setTimeout(() => ctrl2.abort(), 15000);
+    let r2;
+    try {
+        r2 = await fetch(proxyUrl, { signal: ctrl2.signal });
+    } catch (e) {
+        clearTimeout(t2);
+        if (e.name === "AbortError") throw new Error("หมดเวลาเชื่อมต่อ (timeout) — ตรวจสอบว่า Google Sheets เผยแพร่เป็นสาธารณะแล้ว");
+        throw new Error("เชื่อมต่อไม่ได้: " + e.message);
+    }
+    clearTimeout(t2);
+    if (!r2.ok) throw new Error("โหลดไม่สำเร็จ (HTTP " + r2.status + ") — ตรวจสอบว่า Google Sheet เผยแพร่เป็นสาธารณะแล้ว");
+    const txt2 = await r2.text();
+    if (!txt2 || txt2.trim().length < 10) throw new Error("ได้รับข้อมูลว่างเปล่าจาก Google Sheets");
+    return txt2;
 }
 
 function parseCSV(raw) {
