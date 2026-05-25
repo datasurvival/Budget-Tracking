@@ -48,37 +48,23 @@
 </head>
 <body class="h-full text-slate-800 flex flex-col">
 
-<!-- ════════════════════════════════════
-     LOADING OVERLAY
-════════════════════════════════════ -->
 <div id="loading-overlay">
     <div class="spinner mb-4"></div>
     <p class="text-white font-semibold text-base">กำลังโหลดข้อมูลจาก Google Sheets…</p>
     <p class="text-slate-400 text-xs mt-1" id="loading-sub">กรุณารอสักครู่</p>
 </div>
 
-<!-- ════════════════════════════════════
-     TOP HEADER
-════════════════════════════════════ -->
 <header class="gradient-bg text-white px-6 py-4 flex flex-col md:flex-row justify-between items-center border-b border-slate-800 shadow-xl gap-4">
     <div class="flex items-center space-x-4">
 
-        <!-- ── Logo Area ── -->
         <div id="logo-container" class="relative shrink-0">
-            <!--
-                วิธีใส่โลโก้: วางไฟล์ชื่อ "logo.png" (หรือ .jpg/.svg)
-                ไว้ในโฟลเดอร์เดียวกับ HTML บน GitHub แล้วเปลี่ยน
-                LOGO_FILE ด้านล่างให้ตรงกับชื่อไฟล์
-            -->
             <div id="logo-display"
                  class="w-16 h-16 rounded-full bg-slate-900 flex items-center justify-center border-2 border-amber-400 shadow-inner overflow-hidden">
-                <!-- โลโก้จากไฟล์ (โหลดอัตโนมัติ) -->
                 <img id="logo-img"
                      src="1779351889858.png"
                      alt="โลโก้กลุ่มจังหวัดภาคใต้ฝั่งอ่าวไทย"
                      class="w-full h-full object-contain p-1"
                      onerror="this.classList.add('hidden'); document.getElementById('logo-placeholder').classList.remove('hidden');">
-                <!-- Fallback SVG เมื่อไม่พบไฟล์ logo.png -->
                 <svg id="logo-placeholder" class="hidden w-10 h-10 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                     <path stroke-linecap="round" stroke-linejoin="round"
                           d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9s2.015-9 4.5-9m0 0a9.003 9.003 0 018.716 6.747M12 3a9.003 9.003 0 00-8.716 6.747"/>
@@ -86,7 +72,6 @@
             </div>
         </div>
 
-        <!-- ── Title ── -->
         <div>
             <div class="flex items-center space-x-2 flex-wrap gap-y-1">
                 <span class="bg-amber-400 text-slate-950 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">ระบบราชการ 4.0</span>
@@ -96,7 +81,6 @@
         </div>
     </div>
 
-    <!-- ── Right: Sync Status + Update Time ── -->
     <div class="flex flex-col items-end gap-1.5">
         <span id="sync-badge"
               class="inline-flex items-center bg-slate-800/80 border border-slate-700 text-slate-300 text-xs px-3 py-1.5 rounded-xl font-medium gap-1.5">
@@ -111,12 +95,8 @@
     </div>
 </header>
 
-<!-- ════════════════════════════════════
-     MAIN CONTENT
-════════════════════════════════════ -->
 <main class="flex-1 p-4 md:p-6 space-y-6 max-w-[1600px] mx-auto w-full">
 
-    <!-- ── FILTER BAR ── -->
     <div class="bg-white p-5 rounded-3xl card-shadow border border-premium flex flex-wrap gap-4 items-end">
         <div class="flex-1 min-w-[150px]">
             <label for="filter-year" class="block text-xs font-bold text-slate-500 mb-2">
@@ -152,19 +132,16 @@
         </button>
     </div>
 
-    <!-- ── ERROR BANNER (hidden by default) ── -->
     <div id="error-banner" class="hidden bg-red-50 border border-red-200 text-red-700 px-5 py-4 rounded-2xl flex items-start gap-3">
         <i class="fa-solid fa-triangle-exclamation text-red-500 mt-0.5 shrink-0"></i>
         <div>
             <p class="font-bold text-sm">ไม่สามารถโหลดข้อมูลจาก Google Sheets ได้</p>
             <p class="text-xs mt-0.5" id="error-detail"></p>
-            <p class="text-xs mt-1 text-red-600">💡 ตรวจสอบว่า Google Sheet ถูกตั้งเป็น <strong>"Anyone with the link can view"</strong> แล้ว และ Sheet ID ถูกต้อง</p>
+            <p class="text-xs mt-1 text-red-600">💡 ตรวจสอบว่าได้เปิดเผยแพร่ไฟล์ Google Sheets เป็นสาธารณะในรูปแบบ CSV แล้ว</p>
         </div>
     </div>
 
-    <!-- ── KPI CARDS ── -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-        <!-- Total Budget -->
         <div class="bg-white p-5 rounded-3xl card-shadow border border-premium flex flex-col justify-between relative overflow-hidden">
             <div class="flex justify-between items-start mb-2">
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">งบประมาณรวม</span>
@@ -181,7 +158,6 @@
             </div>
             <div class="absolute bottom-0 left-0 right-0 h-1.5 bg-sky-500"></div>
         </div>
-        <!-- Disbursed -->
         <div class="bg-white p-5 rounded-3xl card-shadow border border-premium flex flex-col justify-between relative overflow-hidden">
             <div class="flex justify-between items-start mb-2">
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">ผลการเบิกจ่ายสะสม</span>
@@ -194,11 +170,10 @@
                 <span class="text-[11px] text-slate-400 font-medium">ล้านบาท</span>
             </div>
             <div class="text-xs font-bold text-emerald-600 flex items-center mt-2" id="kpi-disbursed-change">
-                <i class="fa-solid fa-arrow-trend-up mr-1"></i> +15.27% จากปีที่แล้ว
+                <i class="fa-solid fa-arrow-trend-up mr-1"></i> ดึงจากฐานข้อมูล Google ชีท
             </div>
             <div class="absolute bottom-0 left-0 right-0 h-1.5 bg-emerald-500"></div>
         </div>
-        <!-- Spent -->
         <div class="bg-white p-5 rounded-3xl card-shadow border border-premium flex flex-col justify-between relative overflow-hidden">
             <div class="flex justify-between items-start mb-2">
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">ผลการใช้จ่ายจริงสะสม</span>
@@ -211,11 +186,10 @@
                 <span class="text-[11px] text-slate-400 font-medium">ล้านบาท</span>
             </div>
             <div class="text-xs font-bold text-emerald-600 flex items-center mt-2" id="kpi-spent-change">
-                <i class="fa-solid fa-arrow-trend-up mr-1"></i> +13.27% จากปีที่แล้ว
+                <i class="fa-solid fa-arrow-trend-up mr-1"></i> ดึงจากฐานข้อมูล Google ชีท
             </div>
             <div class="absolute bottom-0 left-0 right-0 h-1.5 bg-indigo-500"></div>
         </div>
-        <!-- % Disbursed Donut -->
         <div class="bg-white p-5 rounded-3xl card-shadow border border-premium flex flex-col justify-between items-center text-center relative overflow-hidden">
             <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">ร้อยละการเบิกจ่าย</span>
             <div class="relative w-20 h-20 flex items-center justify-center">
@@ -225,7 +199,6 @@
             <span class="text-[10px] text-slate-400 font-medium mt-2">เป้าหมายสะสม 100%</span>
             <div class="absolute bottom-0 left-0 right-0 h-1.5 bg-sky-400"></div>
         </div>
-        <!-- % Spent Donut -->
         <div class="bg-white p-5 rounded-3xl card-shadow border border-premium flex flex-col justify-between items-center text-center relative overflow-hidden">
             <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">ร้อยละการใช้จ่ายจริง</span>
             <div class="relative w-20 h-20 flex items-center justify-center">
@@ -235,7 +208,6 @@
             <span class="text-[10px] text-slate-400 font-medium mt-2">เป้าหมายสะสม 100%</span>
             <div class="absolute bottom-0 left-0 right-0 h-1.5 bg-teal-500"></div>
         </div>
-        <!-- Projects Count -->
         <div class="bg-white p-5 rounded-3xl card-shadow border border-premium flex flex-col justify-between relative overflow-hidden">
             <div class="flex justify-between items-start mb-2">
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">จำนวนโครงการ</span>
@@ -255,7 +227,6 @@
         </div>
     </div>
 
-    <!-- ── BAR CHART ── -->
     <div class="bg-white p-6 rounded-3xl card-shadow border border-premium">
         <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6 gap-4">
             <div>
@@ -307,7 +278,6 @@
         </div>
     </div>
 
-    <!-- ── TABLE ── -->
     <div class="bg-white rounded-3xl card-shadow border border-premium overflow-hidden flex flex-col">
         <div class="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
@@ -327,7 +297,7 @@
                         <th class="py-3.5 px-4 w-20">ปีงบฯ</th>
                         <th class="py-3.5 px-4 max-w-sm">โครงการ/แผนงาน</th>
                         <th class="py-3.5 px-4">หน่วยดำเนินการ</th>
-                        <th class="py-3.5 px-4">เจ้าภาพจังหวัด</th>
+                        <th class="py-3.5 px-4">จังหวัด</th>
                         <th class="py-3.5 px-4 text-right">งบประมาณ (บาท)</th>
                         <th class="py-3.5 px-4 text-right">เบิกจ่าย (บาท)</th>
                         <th class="py-3.5 px-4 text-right">ใช้จ่ายจริง (บาท)</th>
@@ -346,32 +316,23 @@
     </div>
 </main>
 
-<!-- ════════════════════════════════════
-     FOOTER
-════════════════════════════════════ -->
 <footer class="bg-slate-900 text-slate-400 py-6 text-center text-xs border-t border-slate-800 mt-12">
     <p>© 2026 กลุ่มจังหวัดภาคใต้ฝั่งอ่าวไทย (สุราษฎร์ธานี · นครศรีธรรมราช · ชุมพร · พัทลุง · สงขลา)</p>
     <p class="mt-1 text-[10px] text-slate-500">ขับเคลื่อนด้วยข้อมูลเชิงยุทธศาสตร์เพื่อการพัฒนาเชิงพื้นที่อย่างยั่งยืน</p>
 </footer>
 
-<!-- ════════════════════════════════════
-     JAVASCRIPT
-════════════════════════════════════ -->
 <script>
 // ─────────────────────────────────────────────────────────────────
-//  CONFIGURATION  ← แก้ตรงนี้อย่างเดียวเมื่อต้องการเปลี่ยน Sheet
+//  CONFIGURATION
 // ─────────────────────────────────────────────────────────────────
-const SHEET_ID  = "e/2PACX-1vTWJjFTH30RjhrUC7-W6y_jIlUMdxHmuKp5S7qTi7GSU1C278hv6cPCuRJt6KEymAg9N3ByIOuWPDit/pub?output=csv";
-const SHEET_GID = "0";   // gid ของชีตที่ต้องการ (ดูจาก URL #gid=...)
-// Auto-refresh ทุก 5 นาที (ตั้งค่าเป็น 0 เพื่อปิด)
+const PUBLIC_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTWJjFTH30RjhrUC7-W6y_jIlUMdxHmuKp5S7qTi7GSU1C278hv6cPCuRJt6KEymAg9N3ByIOuWPDit/pub?output=csv";
 const AUTO_REFRESH_MS = 5 * 60 * 1000;
 
 // ─────────────────────────────────────────────────────────────────
-//  COLUMN MAP  ← แมปชื่อคอลัมน์ใน Google Sheet (ภาษาไทย)
-//  เพิ่ม alias ได้ถ้า header ใน Sheet ต่างออกไป
+//  COLUMN MAP (คำสแกนหัวตาราง)
 // ─────────────────────────────────────────────────────────────────
 const COL = {
-    id:         ["ลำดับ", "ลำดับที่", "no", "id"], // เพิ่มบรรทัดนี้เพื่อให้โค้ดรู้จักหัวตารางช่องแรก
+    id:         ["ลำดับ", "ลำดับที่", "no", "id"],
     year:       ["ปีงบประมาณ", "ปี", "year"],
     name:       ["โครงการ", "ชื่อโครงการ", "แผนงาน", "ชื่อแผนงาน", "project"],
     agency:     ["หน่วยดำเนินการ", "หน่วยงาน", "ผู้รับผิดชอบ", "agency"],
@@ -390,24 +351,17 @@ let pctSpentChart      = null;
 let nestedChart        = null;
 let currentLabelMode   = "code";
 
-// ─────────────────────────────────────────────────────────────────
-//  INIT
-// ─────────────────────────────────────────────────────────────────
 window.onload = async function () {
     buildDonutCharts();
     await fetchSheetData();
     if (AUTO_REFRESH_MS > 0) setInterval(() => fetchSheetData(), AUTO_REFRESH_MS);
 };
 
-// ─────────────────────────────────────────────────────────────────
-//  FETCH GOOGLE SHEET DATA (CSV export)
-// ─────────────────────────────────────────────────────────────────
 async function fetchSheetData(manual = false) {
     showLoading(manual ? "รีเฟรชข้อมูล…" : "กำลังโหลดข้อมูลจาก Google Sheets…");
     hideError();
 
-    // Google Sheets public CSV export URL
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}&cachebust=${Date.now()}`;
+    const url = `${PUBLIC_CSV_URL}&cachebust=${Date.now()}`;
 
     try {
         const res = await fetch(url);
@@ -415,7 +369,7 @@ async function fetchSheetData(manual = false) {
         const csv = await res.text();
         RAW_DATABASE = parseCSV(csv);
 
-        if (RAW_DATABASE.length === 0) throw new Error("ไม่พบข้อมูลในชีท หรือ header ไม่ตรงกับที่กำหนด");
+        if (RAW_DATABASE.length === 0) throw new Error("ไม่พบข้อมูลที่ตรงตามเงื่อนไขหรือหัวตารางไม่ถูกต้อง");
 
         updateFilterDropdowns();
         applyFilters();
@@ -424,40 +378,28 @@ async function fetchSheetData(manual = false) {
         console.error("fetchSheetData error:", err);
         showError(err.message);
         setSyncError();
-        // Fallback: ถ้ายังไม่มีข้อมูลเลย ใช้ข้อมูล hardcode เดิม
-        if (RAW_DATABASE.length === 0) {
-            RAW_DATABASE = FALLBACK_DATA;
-            updateFilterDropdowns();
-            applyFilters();
-        }
     } finally {
         hideLoading();
     }
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  CSV PARSER  (รองรับ comma / tab, quoted fields, BOM)
+//  CSV PARSER (เวอร์ชันป้องกันคอลัมน์เยื้อง/สลับช่องแบบอัจฉริยะ)
 // ─────────────────────────────────────────────────────────────────
 function parseCSV(raw) {
-    // Remove BOM
     const text = raw.replace(/^\uFEFF/, "").trim();
     const lines = text.split(/\r?\n/).filter(l => l.trim());
     if (lines.length < 2) return [];
 
-    // Auto-detect delimiter
     const delim = lines[0].includes("\t") ? "\t" : ",";
-
-    // ล้างช่องว่างและแปลงเป็นตัวพิมพ์เล็กทั้งหมดเพื่อความแม่นยำ
     const headers = splitLine(lines[0], delim).map(h => h.trim().toLowerCase());
 
-    // ปรับการค้นหาหัวตารางให้เป็นแบบ Exact Match ป้องกันการดึงคอลัมน์สลับกัน
     function findCol(aliases) {
         for (const alias of aliases) {
             const target = alias.toLowerCase();
-            const idx = headers.findIndex(h => h === target); // หาคำที่ตรงกันเป๊ะ ๆ
+            const idx = headers.findIndex(h => h === target);
             if (idx !== -1) return idx;
         }
-        // Fallback: ถ้าหาตรง ๆ ไม่เจอจริง ๆ ค่อยใช้แบบแฝงคำ (เผื่อพิมพ์เว้นวรรค)
         for (const alias of aliases) {
             const target = alias.toLowerCase();
             const idx = headers.findIndex(h => h.includes(target));
@@ -466,7 +408,7 @@ function parseCSV(raw) {
         return -1;
     }
 
-    const idx = {
+    let idx = {
         id:        findCol(COL.id),
         year:      findCol(COL.year),
         name:      findCol(COL.name),
@@ -476,28 +418,70 @@ function parseCSV(raw) {
         spent:     findCol(COL.spent),
         province:  findCol(COL.province),
     };
-   const result = [];
+
+    const result = [];
     lines.slice(1).forEach((line, i) => {
         const cols = splitLine(line, delim);
+        if (cols.length === 0) return;
+
+        let rawYear = idx.year >= 0 ? (cols[idx.year] || "").trim() : "";
+        let rawName = idx.name >= 0 ? (cols[idx.name] || "").trim() : "";
+        let rawAgency = idx.agency >= 0 ? (cols[idx.agency] || "").trim() : "";
+        let rawProvince = idx.province >= 0 ? (cols[idx.province] || "").trim() : "";
+        let rawBudget = idx.budget >= 0 ? cols[idx.budget] : "0";
+        let rawDisbursed = idx.disbursed >= 0 ? cols[idx.disbursed] : "0";
+        let rawSpent = idx.spent >= 0 ? cols[idx.spent] : "0";
+
+        // 🚨 [ระบบแก้ไขอัจฉริยะ]: หากคอลัมน์สลับตำแหน่ง (ช่อง Year ได้ค่าเป็นข้อความยาว ๆ แทนตัวเลข 4 หลัก)
+        // ระบบจะวิ่งไปสแกนหาเซลล์ในแถวนั้น ๆ ที่มีลักษณะเป็นเลขปีงบประมาณ (256X หรือ 257X) ทันที
+        if (rawYear && !/^\d{4}$/.test(rawYear)) {
+            const matchedYearIdx = cols.findIndex(c => /^(256\d|257\d)$/.test(String(c).trim()));
+            if (matchedYearIdx !== -1) {
+                rawYear = cols[matchedYearIdx].trim();
+                
+                // สลับสแกนหาช่องข้อความอื่นเพื่อ Mapping กลับให้ถูกต้อง
+                cols.forEach((cell) => {
+                    const txt = String(cell).trim();
+                    if (txt.includes("โครงการ") || txt.includes("แผนงาน")) {
+                        rawName = txt;
+                    } else if ((txt.includes("จังหวัด") || txt.includes("อ่าวไทย")) && txt.length < 25) {
+                        rawProvince = txt;
+                    } else if (txt.includes("สำนักงาน") || txt.includes("แขวง") || txt.includes("มหาวิทยาลัย") || txt.includes("อบจ")) {
+                        rawAgency = txt;
+                    }
+                });
+            }
+        }
+
         const row = {
             id:        i + 1,
-            year:      idx.year      >= 0 ? (cols[idx.year]     || "").trim() : "",
-            name:      idx.name      >= 0 ? (cols[idx.name]     || "").trim() : `แถวที่ ${i+2}`,
-            agency:    idx.agency    >= 0 ? (cols[idx.agency]   || "").trim() : "",
-            budget:    idx.budget    >= 0 ? toNum(cols[idx.budget])   : 0,
-            disbursed: idx.disbursed >= 0 ? toNum(cols[idx.disbursed]): 0,
-            spent:     idx.spent     >= 0 ? toNum(cols[idx.spent])    : 0,
-            province:  idx.province  >= 0 ? (cols[idx.province] || "").trim() : "",
+            year:      rawYear,
+            name:      rawName,
+            agency:    rawAgency,
+            budget:    toNum(rawBudget),
+            disbursed: toNum(rawDisbursed),
+            spent:     toNum(rawSpent),
+            province:  rawProvince,
         };
-        // Skip summary rows (รวม) and rows with no valid year number
-       const isValidYear = /^\d+$/.test(String(row.year)); 
-        const isSummary   = /^รวม/.test(row.name.trim());
+
+        // กรองเฉพาะแถวข้อมูลโครงการจริง (ปีงบประมาณต้องเป็นตัวเลข 4 หลัก และชื่อโครงการต้องไม่มีคำว่ารวม)
+        const isValidYear = /^\d{4}$/.test(String(row.year));
+        const isSummary   = /^รวม/.test(row.name.trim()) || row.name.includes("รวมทั้งสิ้น");
+        
         if (row.name && isValidYear && !isSummary) {
+            // ปรับแต่งคำแสดงชื่อจังหวัดให้สม่ำเสมอเป็นมาตรฐานเดียวกัน
+            if (row.province.includes("สุราษฎร์ธานี")) row.province = "จังหวัดสุราษฎร์ธานี";
+            else if (row.province.includes("นครศรีธรรมราช")) row.province = "จังหวัดนครศรีธรรมราช";
+            else if (row.province.includes("ชุมพร")) row.province = "จังหวัดชุมพร";
+            else if (row.province.includes("พัทลุง")) row.province = "จังหวัดพัทลุง";
+            else if (row.province.includes("สงขลา")) row.province = "จังหวัดสงขลา";
+
             result.push(row);
         }
     });
     return result;
 }
+
 function splitLine(line, delim) {
     const result = []; let cur = ""; let inQ = false;
     for (let i = 0; i < line.length; i++) {
@@ -519,7 +503,7 @@ function toNum(v) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  POPULATE FILTER DROPDOWNS DYNAMICALLY
+//  FILTER & RENDER LOGIC
 // ─────────────────────────────────────────────────────────────────
 function updateFilterDropdowns() {
     const years     = [...new Set(RAW_DATABASE.map(r => r.year).filter(Boolean))].sort();
@@ -538,9 +522,6 @@ function updateFilterDropdowns() {
     if ([...provSel.options].some(o => o.value === curProv)) provSel.value = curProv;
 }
 
-// ─────────────────────────────────────────────────────────────────
-//  FILTER & RENDER
-// ─────────────────────────────────────────────────────────────────
 function getFilteredDataset() {
     const year  = document.getElementById("filter-year").value;
     const prov  = document.getElementById("filter-province").value;
@@ -548,7 +529,7 @@ function getFilteredDataset() {
     return RAW_DATABASE.filter(r =>
         (year === "ALL" || r.year === year) &&
         (prov === "ALL" || r.province === prov) &&
-        (q === "" || r.name.toLowerCase().includes(q) || r.agency.toLowerCase().includes(q))
+        (q === "" || r.name.toLowerCase().includes(q) || r.agency.toLowerCase().includes(q) || r.province.toLowerCase().includes(q))
     );
 }
 
@@ -564,7 +545,6 @@ function applyFilters() {
     const pctD = totalBudget > 0 ? (totalDisbursed / totalBudget) * 100 : 0;
     const pctS = totalBudget > 0 ? (totalSpent     / totalBudget) * 100 : 0;
 
-    // KPI
     document.getElementById("kpi-budget").innerText    = fmt(totalBudget    / 1e6);
     document.getElementById("kpi-disbursed").innerText = fmt(totalDisbursed / 1e6);
     document.getElementById("kpi-spent").innerText     = fmt(totalSpent     / 1e6);
@@ -572,17 +552,6 @@ function applyFilters() {
     document.getElementById("kpi-pct-spent-txt").innerText     = `${pctS.toFixed(2)}%`;
     document.getElementById("kpi-projects").innerText  = data.length;
     document.getElementById("kpi-active-projects").innerText = `ดำเนินการแล้ว ${active} โครงการ`;
-
-    const yr = document.getElementById("filter-year").value;
-    const dEl = document.getElementById("kpi-disbursed-change");
-    const sEl = document.getElementById("kpi-spent-change");
-    if (yr !== "ALL" && yr > "2568") {
-        dEl.innerHTML = `<i class="fa-solid fa-hourglass-start mr-1 text-amber-500"></i> เริ่มไตรมาส 1-2`;
-        sEl.innerHTML = `<i class="fa-solid fa-hourglass-start mr-1 text-amber-500"></i> เริ่มบันทึกข้อตกลง PO`;
-    } else {
-        dEl.innerHTML = `<i class="fa-solid fa-arrow-trend-up mr-1 text-emerald-500"></i> +15.27% จากปีที่แล้ว`;
-        sEl.innerHTML = `<i class="fa-solid fa-arrow-trend-up mr-1 text-emerald-500"></i> +13.27% จากปีที่แล้ว`;
-    }
 
     updateDonutProgress(pctD, pctS);
     renderBarChart(data);
@@ -597,7 +566,7 @@ function resetFilters() {
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  CHARTS
+//  CHARTS MANAGEMENT
 // ─────────────────────────────────────────────────────────────────
 function buildDonutCharts() {
     const mkDonut = (id, color) => new Chart(document.getElementById(id).getContext("2d"), {
@@ -613,9 +582,11 @@ function buildDonutCharts() {
 }
 
 function updateDonutProgress(pD, pS) {
-    pctDisbursedChart.data.datasets[0].data = [pD, Math.max(0, 100 - pD)];
+    const validPD = Math.min(100, Math.max(0, pD));
+    const validPS = Math.min(100, Math.max(0, pS));
+    pctDisbursedChart.data.datasets[0].data = [validPD, 100 - validPD];
     pctDisbursedChart.update();
-    pctSpentChart.data.datasets[0].data     = [pS, Math.max(0, 100 - pS)];
+    pctSpentChart.data.datasets[0].data     = [validPS, 100 - validPS];
     pctSpentChart.update();
 }
 
@@ -691,7 +662,7 @@ function renderBarChart(filteredData) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  TABLE
+//  TABLE RENDER
 // ─────────────────────────────────────────────────────────────────
 function renderTable(dataset) {
     const tbody = document.getElementById("project-table-body");
@@ -700,8 +671,7 @@ function renderTable(dataset) {
 
     if (!dataset.length) {
         tbody.innerHTML = `<tr><td colspan="9" class="text-center py-10 text-slate-400">
-            <i class="fa-solid fa-folder-open text-3xl mb-2 block"></i>
-            ไม่พบข้อมูลตามเงื่อนไขที่กรอง</td></tr>`;
+            <i class="fa-solid fa-folder-open text-3xl mb-2 block"></i>ไม่พบข้อมูลตามเงื่อนไขที่กรอง</td></tr>`;
         document.getElementById("table-count-info").innerText  = "แสดง 0 รายการ";
         document.getElementById("table-total-sum").innerText   = "0.00";
         return;
@@ -721,7 +691,7 @@ function renderTable(dataset) {
                 <td class="py-3 px-4"><span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg text-xs font-bold">${item.year}</span></td>
                 <td class="py-3 px-4 max-w-sm"><div class="font-semibold text-slate-800 line-clamp-2" title="${item.name}">${item.name}</div></td>
                 <td class="py-3 px-4 text-xs text-slate-500">${item.agency}</td>
-                <td class="py-3 px-4 text-xs font-semibold text-slate-600">${item.province}</td>
+                <td class="py-3 px-4 text-xs font-semibold text-slate-600">${item.province || "ไม่ระบุ"}</td>
                 <td class="py-3 px-4 text-right font-medium text-slate-700">${fmt(item.budget)}</td>
                 <td class="py-3 px-4 text-right text-sky-600 font-bold">${item.disbursed > 0 ? fmt(item.disbursed) : "—"}</td>
                 <td class="py-3 px-4 text-right text-indigo-600 font-bold">${item.spent > 0 ? fmt(item.spent) : "—"}</td>
@@ -736,7 +706,7 @@ function renderTable(dataset) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-//  EXPORT CSV
+//  EXPORT EXCEL/CSV
 // ─────────────────────────────────────────────────────────────────
 function exportToCSV() {
     const data = getFilteredDataset();
@@ -754,16 +724,6 @@ function exportToCSV() {
     });
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
-
-// ─────────────────────────────────────────────────────────────────
-//  LOGO  — วางไฟล์โลโก้ชื่อ "logo.png" ในโฟลเดอร์เดียวกับ HTML
-//  โครงสร้าง GitHub repo ที่แนะนำ:
-//    /
-//    ├── index.html   (ไฟล์นี้)
-//    └── logo.png     (โลโก้กลุ่มจังหวัด)
-//
-//  ถ้าชื่อไฟล์ต่างกัน แก้ src="logo.png" ใน <img id="logo-img">
-// ─────────────────────────────────────────────────────────────────
 
 // ─────────────────────────────────────────────────────────────────
 //  UI HELPERS
@@ -802,50 +762,6 @@ function setSyncError() {
     document.getElementById("sync-status-text").innerText = "โหลดข้อมูลไม่สำเร็จ";
     badge.querySelector(".pulse-dot").classList.replace("bg-emerald-400", "bg-red-400");
 }
-
-// ─────────────────────────────────────────────────────────────────
-//  FALLBACK DATA (ใช้เมื่อ Google Sheet โหลดไม่ได้)
-// ─────────────────────────────────────────────────────────────────
-const FALLBACK_DATA = [
-    { id:1,  year:"2568", name:"โครงการยกระดับมาตรฐานปาล์มน้ำมัน RSPO",                                           agency:"มหาวิทยาลัยสงขลานครินทร์ วิทยาเขตสุราษฎร์ธานี",             budget:4602500,  disbursed:4602200,    spent:4602200,    province:"จังหวัดสุราษฎร์ธานี" },
-    { id:2,  year:"2568", name:"โครงการส่งเสริมการใช้นวัตกรรมจุลินทรีย์ ปม.",                                    agency:"สำนักงานประมงจังหวัด",                                        budget:4400000,  disbursed:4292749,    spent:4292749,    province:"จังหวัดชุมพร" },
-    { id:3,  year:"2568", name:"โครงการยกระดับขีดความสามารถการท่องเที่ยวเชิงสุขภาพ",                              agency:"สำนักงานป้องกันและบรรเทาสาธารณภัย",                          budget:7732100,  disbursed:7673986,    spent:7673986,    province:"จังหวัดสุราษฎร์ธานี" },
-    { id:4,  year:"2568", name:"โครงการส่งเสริมการตลาดท่องเที่ยวโดยชุมชน CBT",                                   agency:"สำนักงานการท่องเที่ยวและกีฬาจังหวัดชุมพร",                   budget:4700000,  disbursed:4451555,    spent:4451555,    province:"จังหวัดชุมพร" },
-    { id:5,  year:"2568", name:"โครงการพัฒนาศักยภาพการท่องเที่ยวแห่งใหม่ ตำบลวังตะกอ",                          agency:"สำนักงานโยธาธิการและผังเมืองจังหวัดชุมพร",                   budget:20000000, disbursed:19489000,   spent:19489000,   province:"จังหวัดชุมพร" },
-    { id:6,  year:"2568", name:"โครงการพัฒนาการท่องเที่ยวตามศาสตร์พระราชา โครงการพัฒนาพื้นที่หนองใหญ่",        agency:"สำนักงานโยธาธิการและผังเมืองจังหวัดชุมพร",                   budget:8600000,  disbursed:8111111,    spent:8111111,    province:"จังหวัดชุมพร" },
-    { id:7,  year:"2568", name:"โครงการยกระดับโครงสร้างพื้นฐานเขตพัฒนาการท่องเที่ยวทะเลสาบสงขลา",               agency:"แขวงทางหลวงชนบทสงขลา",                                      budget:7000000,  disbursed:6440000,    spent:6440000,    province:"จังหวัดสงขลา" },
-    { id:8,  year:"2568", name:"โครงการพัฒนาการท่องเที่ยวเชิงนิเวศมรดกทางการเกษตรโลก",                          agency:"สงขลา พัทลุง นครศรีฯ",                                       budget:4999000,  disbursed:4967500,    spent:4967500,    province:"จังหวัดสงขลา" },
-    { id:9,  year:"2568", name:"โครงการส่งเสริมช่องทางการตลาด OTOP และผลิตผลการเกษตร",                          agency:"สำนักงานพัฒนาชุมชนจังหวัดสงขลา",                             budget:6433600,  disbursed:6432000,    spent:6432000,    province:"จังหวัดสงขลา" },
-    { id:10, year:"2568", name:"โครงการก่อสร้างถนนลาดยาง สาย ทล.4259 - เขาข่า",                                 agency:"แขวงทางหลวงชนบทสุราษฎร์ธานี",                                budget:53484000, disbursed:43222410,   spent:53460000,   province:"จังหวัดสุราษฎร์ธานี" },
-    { id:11, year:"2568", name:"โครงการปรับปรุงทางหลวงเพื่อสนับสนุนการขนส่งและการท่องเที่ยว",                    agency:"แขวงทางหลวงนครศรีธรรมราชที่ 2 (ทุ่งสง)",                    budget:50000000, disbursed:48951777.17,spent:48956000,   province:"จังหวัดนครศรีธรรมราช" },
-    { id:12, year:"2568", name:"โครงการปรับปรุงเส้นทางโลจิสติกส์และการท่องเที่ยว นครศรีฯ สงขลา พัทลุง",         agency:"แขวงทางหลวงชนบทนครศรีธรรมราช",                               budget:48500000, disbursed:48222228,   spent:48450000,   province:"จังหวัดนครศรีธรรมราช" },
-    { id:13, year:"2568", name:"โครงการบูรณาการโครงข่ายคมนาคมถนนเพื่อพัฒนาการท่องเที่ยวทะเลสาบสงขลา",          agency:"แขวงทางหลวงชนบทสงขลา",                                      budget:26000000, disbursed:25990000,   spent:25990000,   province:"จังหวัดสงขลา" },
-    { id:14, year:"2568", name:"โครงการพัฒนาทางหลวงสายรองรองรับโลจิสติกส์กลุ่มจังหวัดภาคใต้ฝั่งอ่าวไทย",       agency:"แขวงทางหลวงสงขลาที่ 1",                                      budget:30000000, disbursed:29983000,   spent:29983000,   province:"จังหวัดสงขลา" },
-    { id:15, year:"2568", name:"โครงการซ่อมสร้างผิวทางแอสฟัลต์คอนกรีต ถนนสาย พท.5050",                          agency:"แขวงทางหลวงชนบทพัทลุง",                                      budget:50000000, disbursed:49980000,   spent:49980000,   province:"จังหวัดพัทลุง" },
-    { id:16, year:"2568", name:"โครงการปรับปรุงแก้ไขสะพานวรดิลก อ.หลังสวน จ.ชุมพร",                             agency:"สำนักงานโยธาธิการและผังเมืองจังหวัดชุมพร",                   budget:5700000,  disbursed:5391981,    spent:5400000,    province:"จังหวัดชุมพร" },
-    { id:17, year:"2568", name:"โครงการปรับปรุงทางหลวงหมายเลข 41 ตอน ท่าชี - ถ้ำพรรณรา",                       agency:"แขวงทางหลวงสุราษฎร์ธานี ที่ 3 (เวียงสระ)",                  budget:30000000, disbursed:29987000,   spent:29987000,   province:"จังหวัดสุราษฎร์ธานี" },
-    { id:18, year:"2568", name:"โครงการฟื้นฟูทรัพยากรทางทะเลและชายฝั่ง",                                        agency:"สำนักงานทรัพยากรทางทะเลและชายฝั่งที่ 4",                     budget:4000000,  disbursed:4000000,    spent:4000000,    province:"จังหวัดสุราษฎร์ธานี" },
-    { id:19, year:"2568", name:"โครงการพัฒนาทักษะช่างเชื่อมสู่มาตรฐานสากล",                                     agency:"สถาบันพัฒนาฝีมือแรงงาน 12 สงขลา",                           budget:1412700,  disbursed:1412700,    spent:1412700,    province:"จังหวัดสงขลา" },
-    { id:20, year:"2568", name:"โครงการส่งเสริมฟื้นฟูการเลี้ยงควายปลักระบบนิเวศทะเลน้อย",                       agency:"สำนักงานปศุสัตว์ นครศรีธรรมราช พัทลุง สงขลา",              budget:1802300,  disbursed:1743930,    spent:1743930,    province:"จังหวัดนครศรีธรรมราช" },
-    { id:21, year:"2568", name:"ค่าใช้จ่ายเพื่อการบริหารงานกลุ่มจังหวัดแบบบูรณาการ",                            agency:"กลุ่มจังหวัดภาคใต้ฝั่งอ่าวไทย",                              budget:5000000,  disbursed:4998705.35, spent:4998705.35, province:"จังหวัดสุราษฎร์ธานี" },
-    { id:22, year:"2569", name:"โครงการส่งเสริมช่องทางการตลาด OTOP ปี 2569",                                     agency:"สำนักงานพัฒนาชุมชนจังหวัดสุราษฎร์ธานี,นครศรีธรรมราช,สงขลา",budget:8900000,  disbursed:0,          spent:0,          province:"จังหวัดสงขลา" },
-    { id:23, year:"2569", name:"โครงการบริหารจัดการสวนปาล์มน้ำมันแบบมืออาชีพสู่สังคมคาร์บอนต่ำ",               agency:"ศูนย์วิจัยปาล์มน้ำมันสุราษฎร์ธานี",                          budget:1682000,  disbursed:395177.22,  spent:395177.22,  province:"จังหวัดสุราษฎร์ธานี" },
-    { id:24, year:"2569", name:"โครงการเพิ่มประสิทธิภาพรักษาความปลอดภัยพื้นที่ท่องเที่ยว",                      agency:"สำนักงานป้องกันและบรรเทาสาธารณภัยจังหวัดสุราษฎร์ธานี",    budget:5520100,  disbursed:4897000,    spent:4897000,    province:"จังหวัดสุราษฎร์ธานี" },
-    { id:25, year:"2569", name:"โครงการปรับปรุงเส้นทางโลจิสติกส์ นครศรีฯ สงขลา พัทลุง (ตอนที่ 2)",              agency:"แขวงทางหลวงชนบทนครศรีธรรมราช",                               budget:48800000, disbursed:0,          spent:42190000,   province:"จังหวัดนครศรีธรรมราช" },
-    { id:26, year:"2569", name:"โครงการพัฒนาโครงสร้างพื้นฐานทางหลวงแผ่นดินเชื่อมโยงอ่าวไทย-อันดามัน",          agency:"แขวงทางหลวงสงขลาที่ 1",                                      budget:49500000, disbursed:0,          spent:49490000,   province:"จังหวัดสงขลา" },
-    { id:27, year:"2569", name:"โครงการปรับปรุงท่าเทียบเรืออ่าวสะพลี จ.ชุมพร",                                   agency:"สำนักงานโยธาธิการและผังเมืองจังหวัดชุมพร",                   budget:50000000, disbursed:0,          spent:0,          province:"จังหวัดชุมพร" },
-    { id:28, year:"2569", name:"โครงการปรับปรุงทางหลวงหมายเลข 401 ช่องชาลี-ท่าโรงช้าง (ตอนที่ 2)",              agency:"แขวงทางหลวงสุราษฎร์ธานีที่ 1 พุนพิน",                       budget:50000000, disbursed:0,          spent:0,          province:"จังหวัดสุราษฎร์ธานี" },
-    { id:29, year:"2569", name:"โครงการปรับปรุงทางหลวงสนับสนุนการขนส่งและการท่องเที่ยว ทุ่งสง",                 agency:"แขวงทางหลวงนครศรีธรรมราชที่ 2 (ทุ่งสง)",                    budget:50000000, disbursed:0,          spent:48381160,   province:"จังหวัดนครศรีธรรมราช" },
-    { id:30, year:"2569", name:"โครงการปรับปรุงทางหลวงสายรองสนับสนุนโลจิสติกส์ฝั่งอ่าวไทย",                     agency:"แขวงทางหลวงสงขลาที่ 2 (นาหม่อม)",                           budget:20000000, disbursed:0,          spent:19483000,   province:"จังหวัดสงขลา" },
-    { id:31, year:"2569", name:"โครงการยกระดับมาตรฐานบริการท่องเที่ยวระดับสากล",                                  agency:"สำนักงานการท่องเที่ยวและกีฬา 5 จังหวัด",                     budget:4505000,  disbursed:1739500,    spent:1739500,    province:"จังหวัดชุมพร" },
-    { id:32, year:"2569", name:"โครงการซ่อมสร้างผิวทางแอสฟัลต์ พท.5050 (ช่วงที่ 2)",                             agency:"แขวงทางหลวงชนบทพัทลุง",                                      budget:50000000, disbursed:0,          spent:0,          province:"จังหวัดพัทลุง" },
-    { id:33, year:"2569", name:"โครงการยกระดับผลิตภัณฑ์อัตลักษณ์พื้นถิ่นกลุ่มจังหวัดภาคใต้ฝั่งอ่าวไทย",        agency:"สำนักงานอุตสาหกรรมจังหวัด 5 จังหวัด",                        budget:3662100,  disbursed:0,          spent:0,          province:"จังหวัดสงขลา" },
-    { id:34, year:"2569", name:"โครงการพัฒนาถนนสายรองรองรับการท่องเที่ยวทะเลสาบสงขลา",                          agency:"องค์การบริหารส่วนจังหวัดสงขลา",                               budget:34000000, disbursed:0,          spent:33900000,   province:"จังหวัดสงขลา" },
-    { id:35, year:"2569", name:"โครงการพัฒนาโครงข่ายถนนสายรองรองรับการขนส่งและท่องเที่ยว",                       agency:"แขวงทางหลวงชนบทพัทลุง",                                      budget:30000000, disbursed:0,          spent:0,          province:"จังหวัดพัทลุง" },
-    { id:36, year:"2569", name:"ฟื้นฟูทรัพยากรทางทะเลและชายฝั่ง เสริมศักยภาพท่องเที่ยวเชิงนิเวศ",               agency:"สำนักงานทรัพยากรทางทะเลและชายฝั่งที่ 4",                     budget:5200000,  disbursed:750000,     spent:750000,     province:"จังหวัดสุราษฎร์ธานี" },
-    { id:37, year:"2569", name:"พัฒนาทักษะช่างเชื่อมสู่มาตรฐานสากล รองรับอุตสาหกรรมสมัยใหม่",                    agency:"สถาบันพัฒนาฝีมือแรงงาน 12 สงขลา",                           budget:2217800,  disbursed:801084,     spent:801084,     province:"จังหวัดสงขลา" },
-    { id:38, year:"2569", name:"ค่าใช้จ่ายเพื่อการบริหารงานกลุ่มจังหวัดแบบบูรณาการ ปี 2569",                    agency:"กลุ่มจังหวัดภาคใต้ฝั่งอ่าวไทย",                              budget:5000000,  disbursed:2102951.56, spent:2102951.56, province:"จังหวัดสุราษฎร์ธานี" },
-];
 </script>
 </body>
 </html>
