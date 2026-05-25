@@ -74,7 +74,7 @@
                  class="w-16 h-16 rounded-full bg-slate-900 flex items-center justify-center border-2 border-amber-400 shadow-inner overflow-hidden">
                 <!-- โลโก้จากไฟล์ (โหลดอัตโนมัติ) -->
                 <img id="logo-img"
-                     src="logo.png"
+                     src="1779351889858.png"
                      alt="โลโก้กลุ่มจังหวัดภาคใต้ฝั่งอ่าวไทย"
                      class="w-full h-full object-contain p-1"
                      onerror="this.classList.add('hidden'); document.getElementById('logo-placeholder').classList.remove('hidden');">
