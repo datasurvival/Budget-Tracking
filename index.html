@@ -447,29 +447,36 @@ function parseCSV(raw) {
     // Auto-detect delimiter
     const delim = lines[0].includes("\t") ? "\t" : ",";
 
+    // ล้างช่องว่างและแปลงเป็นตัวพิมพ์เล็กทั้งหมดเพื่อความแม่นยำ
     const headers = splitLine(lines[0], delim).map(h => h.trim().toLowerCase());
 
-    // Map header positions for each field
+    // ปรับการค้นหาหัวตารางให้เป็นแบบ Exact Match ป้องกันการดึงคอลัมน์สลับกัน
     function findCol(aliases) {
         for (const alias of aliases) {
-            const idx = headers.findIndex(h => h.includes(alias.toLowerCase()));
+            const target = alias.toLowerCase();
+            const idx = headers.findIndex(h => h === target); // หาคำที่ตรงกันเป๊ะ ๆ
+            if (idx !== -1) return idx;
+        }
+        // Fallback: ถ้าหาตรง ๆ ไม่เจอจริง ๆ ค่อยใช้แบบแฝงคำ (เผื่อพิมพ์เว้นวรรค)
+        for (const alias of aliases) {
+            const target = alias.toLowerCase();
+            const idx = headers.findIndex(h => h.includes(target));
             if (idx !== -1) return idx;
         }
         return -1;
     }
 
-const idx = {
-        id:       findCol(COL.id), // เพิ่มบรรทัดนี้
-        year:     findCol(COL.year),
-        name:     findCol(COL.name),
-        agency:   findCol(COL.agency),
-        budget:   findCol(COL.budget),
-        disbursed:findCol(COL.disbursed),
-        spent:    findCol(COL.spent),
-        province: findCol(COL.province),
+    const idx = {
+        id:        findCol(COL.id),
+        year:      findCol(COL.year),
+        name:      findCol(COL.name),
+        agency:    findCol(COL.agency),
+        budget:    findCol(COL.budget),
+        disbursed: findCol(COL.disbursed),
+        spent:     findCol(COL.spent),
+        province:  findCol(COL.province),
     };
-
-    const result = [];
+   const result = [];
     lines.slice(1).forEach((line, i) => {
         const cols = splitLine(line, delim);
         const row = {
@@ -483,13 +490,14 @@ const idx = {
             province:  idx.province  >= 0 ? (cols[idx.province] || "").trim() : "",
         };
         // Skip summary rows (รวม) and rows with no valid year number
-        const isValidYear = /\d+/.test(String(row.year)); 
+       const isValidYear = /^\d+$/.test(String(row.year)); 
         const isSummary   = /^รวม/.test(row.name.trim());
-        if (row.name && isValidYear && !isSummary) result.push(row);
+        if (row.name && isValidYear && !isSummary) {
+            result.push(row);
+        }
     });
     return result;
 }
-
 function splitLine(line, delim) {
     const result = []; let cur = ""; let inQ = false;
     for (let i = 0; i < line.length; i++) {
