@@ -426,27 +426,32 @@ function parseCSV(raw) {
             budget:    toNum(rawBudget),
             disbursed: toNum(rawDisbursed),
             spent:     toNum(rawSpent),
-            province:  rawProvince.replace(/\s+/g, ""), // ลบช่องว่างทั้งหมดในชื่อจังหวัด
+            province:  rawProvince.trim(),
         };
 
-        // ตรวจสอบรูปแบบปีงบประมาณ (รองรับกรณีมีช่องว่างติดมา)
+        // ตรวจสอบรูปแบบปีงบประมาณ: ตัด .0 ออกก่อน (กรณี Google Sheets export เป็น 2568.0)
+        row.year = row.year.replace(/\.0+$/, "").trim();
         const isValidYear = /^\d{4}$/.test(row.year);
         
-        // ปรับการดักจับแถว "รวม" ให้แม่นยำขึ้น โดยจะข้ามเฉพาะแถวที่เป็นยอดสรุปท้ายตารางจริงๆ เท่านั้น
-        const isSummaryRow = row.name === "รวม" || 
-                             row.name === "รวมทั้งสิ้น" || 
-                             row.name.startsWith("รวมผล") || 
-                             (row.name.includes("รวม") && row.budget === 0 && row.disbursed === 0);
+        // ปรับการดักจับแถว "รวม" ให้แม่นยำขึ้น: ตรงกันเป๊ะเท่านั้น ไม่ใช้ includes เพราะจะตัดชื่อโครงการที่มีคำ "รวม" ออก
+        const nameTrimmed = row.name.trim();
+        const isSummaryRow = nameTrimmed === "รวม" || 
+                             nameTrimmed === "รวมทั้งสิ้น" || 
+                             nameTrimmed === "รวมผลการดำเนินงาน" ||
+                             /^รวม\s*$/.test(nameTrimmed);
         
         // ถ้ามีข้อมูลชื่อโครงการ หรืออย่างน้อยมีระบุหน่วยงาน/จังหวัด และไม่ใช่แถวสรุปยอด ให้ดึงมาแสดงผลทั้งหมด
         if ((row.name || row.agency) && isValidYear && !isSummaryRow) {
             
             // ปรับคลีนชื่อจังหวัดให้เข้าล็อกมาตรฐาน Dropdown
-            if (row.province.includes("สุราษฎร์")) row.province = "จังหวัดสุราษฎร์ธานี";
-            else if (row.province.includes("นครศรี")) row.province = "จังหวัดนครศรีธรรมราช";
-            else if (row.province.includes("ชุมพร")) row.province = "จังหวัดชุมพร";
-            else if (row.province.includes("พัทลุง")) row.province = "จังหวัดพัทลุง";
-            else if (row.province.includes("สงขลา")) row.province = "จังหวัดสงขลา";
+            const p = row.province.trim();
+            if (p.includes("สุราษฎร์"))      row.province = "จังหวัดสุราษฎร์ธานี";
+            else if (p.includes("นครศรี"))   row.province = "จังหวัดนครศรีธรรมราช";
+            else if (p.includes("ชุมพร"))    row.province = "จังหวัดชุมพร";
+            else if (p.includes("พัทลุง"))   row.province = "จังหวัดพัทลุง";
+            else if (p.includes("สงขลา"))    row.province = "จังหวัดสงขลา";
+            else if (p.includes("ตรัง"))     row.province = "จังหวัดตรัง";
+            else row.province = p; // เก็บค่าเดิมถ้าไม่ match จังหวัดในกลุ่ม
 
             result.push(row);
         }
@@ -458,7 +463,11 @@ function splitLine(line, delim) {
     const result = []; let cur = ""; let inQ = false;
     for (let i = 0; i < line.length; i++) {
         const c = line[i];
-        if (c === '"') { inQ = !inQ; continue; }
+        if (c === '"') {
+            // รองรับ escaped quote ("")
+            if (inQ && line[i + 1] === '"') { cur += '"'; i++; continue; }
+            inQ = !inQ; continue;
+        }
         if (c === delim && !inQ) { result.push(cur); cur = ""; continue; }
         cur += c;
     }
